@@ -25,6 +25,9 @@ int sym_index = 0;
 
 int main(void)
 {
+	for(int i = 0; i < 1000; ++i)
+		for(int j = 0; j < 1000; ++j)
+			scme_rep[i][j] = '\0';
 	int c;
 	int x_cord = 0;
 	int y_cord = 0;
