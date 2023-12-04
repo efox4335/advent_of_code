@@ -1,6 +1,6 @@
 /*
 store each game with the min number to cubes required for eacch game
-get the power of each game and add together
+get the power of each game and add them together
 */
 
 #include <stdio.h>
