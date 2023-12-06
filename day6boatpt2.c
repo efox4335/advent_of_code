@@ -29,7 +29,7 @@ int main(void)
 	int game_index = 0;
 	size_t lim = 0;
 	char *line = NULL;
-	char *number = (char *) malloc(sizeof(char) * 100);
+	char *number = NULL;
 	char real_number[1000] = "\0";
 
 	for(int i = 0; getline(&line, &lim, stdin) > 1; ++i){
