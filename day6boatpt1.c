@@ -25,7 +25,7 @@ int main(void)
 	struct game_data games[100];
 	int game_index = 0;
 	size_t lim = 0;
-	char *line;
+	char *line = NULL;
 	char *number = (char *) malloc(sizeof(char) * 100);
 
 	for(int i = 0; getline(&line, &lim, stdin) > 1; ++i){
@@ -39,6 +39,7 @@ int main(void)
 				games[game_index++].game_record = atoi(number);
 		}
 		free(line);
+		line = NULL;
 	}
 
 	for(int i = 0; i < game_index; ++i, sum_winning = 0){

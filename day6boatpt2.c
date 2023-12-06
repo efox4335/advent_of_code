@@ -28,7 +28,7 @@ int main(void)
 	struct game_data games[100];
 	int game_index = 0;
 	size_t lim = 0;
-	char *line;
+	char *line = NULL;
 	char *number = (char *) malloc(sizeof(char) * 100);
 	char real_number[1000] = "\0";
 
@@ -48,6 +48,7 @@ int main(void)
 			games[game_index++].game_record = atol(real_number);
 		free(line);
 		real_number[0] = '\0';
+		line = NULL;
 	}
 
 	printf("%ld\n", games[0].game_record);
