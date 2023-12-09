@@ -37,7 +37,7 @@ int main(void)
 
 	int findnodelenght(int *);
 	int findnode(char *, int, int, int);
-	long int lcmcalc(long int *, int);
+	long int lcmcalc(long int, long int);
 
 
 	getline(&line, &length, stdin);
@@ -92,8 +92,11 @@ int main(void)
 
 	printf("hi\n");
 
+	for(int i = 1; i < start_node_index; ++i){
+		loop_z[0] = lcmcalc(loop_z[0], loop_z[i]);
+	}
 
-	printf("answer: %ld\n", lcmcalc(loop_z, start_node_index));
+	printf("answer: %ld\n", loop_z[0]);
 
 	return 0;
 }
@@ -153,49 +156,25 @@ int findnode(char *node_name, int cmplen, int st_from, int st_cmp)
 }
 
 
-/*
-*= lowest in set until all are equal
-*/
-long int lcmcalc(long int arr[], int num_of_ele)
+long int get_gcd(long int a, long int b)
 {
-	long int running_total[100];
-	long int mutp[100];
-
-	for(int i = 0; i < num_of_ele; i++){
-		running_total[i] = arr[i];
-		mutp[i] = 1;
-	}
-
-	int inc_track = 0;
-	int lowest = 0;
-
 	while(1){
-	//	for(int i = 0; i < num_of_ele; i++){
-	//		printf("%ld ", running_total[i]);
-	//	}
-	//	printf("\n");
-		inc_track = 0;
-		lowest = 0;
-		for(int i = 0; i < num_of_ele; i++){
-			//printf("%ld %ld\n", running_total[i], running_total[lowest]);
-			if((long int) running_total[i] < (long int) running_total[lowest]){
-				inc_track = 1;
-				lowest = i;
-			}
-
-			if((long int) running_total[i] != (long int) running_total[lowest])
-				inc_track = 1;
+		if(a >= b){
+			a -= b;
 		}
-
-	//	for(int i = 0; i < num_of_ele; i++){
-	//		printf("%ld ", running_total[i]);
-	//	}
-	//	printf("\n");
-		if(inc_track == 0)
-			break;
-		mutp[lowest] += 1;
-		running_total[lowest] = arr[lowest] * mutp[lowest];
-
+		else if(a < b){
+			b -= a;
+		}
+		if(a == 0)
+			return b;
 	}
-	return running_total[0];
+}
+
+/*
+gets lcm form lcm(a, b) = (a*b)/gcd(a,b)
+*/
+long int lcmcalc(long int a, long int b)
+{
+	long int get_gcd(long int, long int);
+	return (a * b)/ get_gcd(a,b);
 }
