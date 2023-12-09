@@ -155,7 +155,7 @@ int findnode(char *node_name, int cmplen, int st_from, int st_cmp)
 	return -1;
 }
 
-
+//uses euclidean algorithm
 long int get_gcd(long int a, long int b)
 {
 	while(1){
