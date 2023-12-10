@@ -34,7 +34,6 @@ struct pathnode{
 };
 
 struct pathnode trav_node;
-struct node path[100000];
 
 int left_turns = 0;
 int right_turns = 0;
@@ -87,8 +86,6 @@ int main(void)
 
 	while(trav_node.curr_row != start_loc.row || trav_node.curr_column != start_loc.column){
 		pathstep(&trav_node);
-		path[step_num].row = trav_node.curr_row;
-		path[step_num].column = trav_node.curr_column;
 		main_path_map[trav_node.curr_row][ trav_node.curr_column] = mazemap[trav_node.curr_row][trav_node.curr_column];
 	//	printf("%c %d %d %d\n", mazemap[trav_node.curr_row][trav_node.curr_column], trav_node.curr_row, trav_node.curr_column, step_num);
 		++step_num;
