@@ -214,13 +214,9 @@ long int find_valid_configs(int st_index)
 //		printf("%d\n", cashe[st_index + 1][broken_spr_arr[st_index + 1].offset]);
 //		printf("out: %d %d\n", st_index, broken_spr_arr[st_index].offset);
 		if(cashe[st_index + 1][broken_spr_arr[st_index + 1].offset] != -1){
-			printf("hi2\n");
 			valid_track += cashe[st_index + 1][broken_spr_arr[st_index + 1].offset];
 		}
 		else{
-			printf("%d\n", cashe[st_index + 1][broken_spr_arr[st_index + 1].offset]);
-			printf("out: %d %d\n", st_index + 1, broken_spr_arr[st_index + 1].offset);
-
 			temp_ind_store =  broken_spr_arr[st_index + 1].offset;
 			temp_store = find_valid_configs(st_index + 1);
 
