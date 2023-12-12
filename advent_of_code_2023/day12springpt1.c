@@ -1,5 +1,6 @@
 /*
-get all possibilities when getting possibilities check against input if possible add to counter when done print
+for each block of bad springs start at the beginning of the list of input + the offset of bad springs before it
+compute the list of all posiable positions it can be in and do this for each of the blocks after this
 */
 #include <stdio.h>
 #include <string.h>
