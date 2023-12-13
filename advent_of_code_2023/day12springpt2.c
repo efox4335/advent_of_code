@@ -158,37 +158,21 @@ long int find_valid_configs(int st_index)
 	void set_offset(int);
 	void deprint(void);
 
-//	return 0;
-
-	//if(cashe[st_index][broken_spr_arr[st_index].offset] != -1){
-	//		printf("hi\n");
-	//		return cashe[st_index][broken_spr_arr[st_index].offset];
-	//	}
-
 	while(broken_spr_num - st_index > 1){
-//		printf("start new %d %d\n", st_index, broken_spr_arr[st_index].offset);
 		//checks if # is before current place
 		if(broken_spr_arr[st_index].offset > 0 && curpt_data[broken_spr_arr[st_index].offset - 1] == '#'){
-//			printf("# before\n");
-		//	cashe[st_index][broken_spr_arr[st_index].offset] = valid_track;
-		//	printf("in: %d %d\n", st_index, broken_spr_arr[st_index].offset);
 			return valid_track;
 			is_pross = 0;
 		}
 
 		//checks if past max offset
 		if(broken_spr_arr[broken_spr_num - 1].offset > broken_spr_arr[broken_spr_num - 1].max_offset){
-	//		printf("offset to big\n");
-		//	cashe[st_index][broken_spr_arr[st_index].offset] = valid_track;
-		//	printf("in: %d %d\n", st_index, broken_spr_arr[st_index].offset);
-
 			return valid_track;
 			is_pross = 0;
 		}
 
 		//checks if # is right after place
 		if(curpt_data[broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length] == '#'){
-//			printf("# after\n");
 			broken_spr_arr[st_index].offset += 1;
 			set_offset(st_index);
 			continue;
@@ -196,9 +180,7 @@ long int find_valid_configs(int st_index)
 
 		//checks if place is valid
 		for(int i = broken_spr_arr[st_index].offset; i < broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length; ++i){
-//			printf("%c %d", curpt_data[i], i);
 			if(curpt_data[i] == '.'){
-//				printf("\n");
 				valid_place = 1;
 				break;
 			}
@@ -209,10 +191,6 @@ long int find_valid_configs(int st_index)
 			valid_place = 0;
 			continue;
 		}
-
-//		printf("recur\n");
-//		printf("%d\n", cashe[st_index + 1][broken_spr_arr[st_index + 1].offset]);
-//		printf("out: %d %d\n", st_index, broken_spr_arr[st_index].offset);
 		if(cashe[st_index + 1][broken_spr_arr[st_index + 1].offset] != -1){
 			valid_track += cashe[st_index + 1][broken_spr_arr[st_index + 1].offset];
 		}
@@ -229,29 +207,23 @@ long int find_valid_configs(int st_index)
 	}
 
 	if(is_pross > 0){
-	//	deprint();
-	//	printf("e:%ld\n", is_pross);
 	//	return is_pross--;
 	}
 
 	while(1){
-//		printf("hi5\n");
 		//checks if # is before current place
 		if(broken_spr_arr[st_index].offset > 0 && curpt_data[broken_spr_arr[st_index].offset - 1] == '#'){
-//			printf("hi9\n");
 			break;
 		}
 
 		//checks if past max offset
 		if(broken_spr_arr[broken_spr_num - 1].offset > broken_spr_arr[broken_spr_num - 1].max_offset){
-//			printf("hi10\n");
 			break;
 		}
 
 		//checks if # is right after place
 		if(valid_place == 0){
 			for(int i = broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length; curpt_data[i] != '\0'; ++i){
-//				printf("hi11\n");
 				if(curpt_data[i] == '#'){
 					is_pross = 0;
 					valid_place = 1;
@@ -270,25 +242,18 @@ long int find_valid_configs(int st_index)
 			}
 		}
 		if(valid_place == 1){
-//			printf("hi12\n");
 			broken_spr_arr[st_index].offset += 1;
 			valid_place = 0;
 			continue;
 		}
 
 		++valid_track;
-	//	if(valid_track > 10){
-	//	deprint();
-	//	}
-	//	printf("%ld\n", valid_track);
 		broken_spr_arr[st_index].offset += 1;
 	}
 
 	if(valid_place == 3){
 		is_pross = valid_place - 1;
 	}
-	//deprint();
-//	printf("%ld %ld\n", valid_track, is_pross);
 
 	return valid_track;
 }

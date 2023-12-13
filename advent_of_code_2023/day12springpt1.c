@@ -127,22 +127,18 @@ long int find_valid_configs(int st_index)
 //	return 0;
 
 	while(broken_spr_num - st_index > 1){
-//		printf("start new %d %d\n", st_index, broken_spr_arr[st_index].offset);
 		//checks if # is before current place
 		if(broken_spr_arr[st_index].offset > 0 && curpt_data[broken_spr_arr[st_index].offset - 1] == '#'){
-//			printf("# before\n");
 			return valid_track;
 		}
 
 		//checks if past max offset
 		if(broken_spr_arr[broken_spr_num - 1].offset > broken_spr_arr[broken_spr_num - 1].max_offset){
-	//		printf("offset to big\n");
 			return valid_track;
 		}
 
 		//checks if # is right after place
 		if(curpt_data[broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length] == '#'){
-//			printf("# after\n");
 			broken_spr_arr[st_index].offset += 1;
 			set_offset(st_index);
 			continue;
@@ -150,9 +146,7 @@ long int find_valid_configs(int st_index)
 
 		//checks if place is valid
 		for(int i = broken_spr_arr[st_index].offset; i < broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length; ++i){
-//			printf("%c %d", curpt_data[i], i);
 			if(curpt_data[i] == '.'){
-//				printf("\n");
 				valid_place = 1;
 				break;
 			}
@@ -164,14 +158,12 @@ long int find_valid_configs(int st_index)
 			continue;
 		}
 
-//		printf("recur\n");
 		valid_track += find_valid_configs(st_index + 1);
 		broken_spr_arr[st_index].offset += 1;
 		set_offset(st_index);
 	}
 
 	while(1){
-//		printf("hi5\n");
 		//checks if # is before current place
 		if(broken_spr_arr[st_index].offset > 0 && curpt_data[broken_spr_arr[st_index].offset - 1] == '#'){
 //			printf("hi9\n");
@@ -180,13 +172,11 @@ long int find_valid_configs(int st_index)
 
 		//checks if past max offset
 		if(broken_spr_arr[broken_spr_num - 1].offset > broken_spr_arr[broken_spr_num - 1].max_offset){
-//			printf("hi10\n");
 			return valid_track;
 		}
 
 		//checks if # is right after place
 		for(int i = broken_spr_arr[st_index].offset + broken_spr_arr[st_index].length; curpt_data[i] != '\0'; ++i){
-//			printf("hi11\n");
 			if(curpt_data[i] == '#'){
 				valid_place = 1;
 				break;
@@ -201,7 +191,6 @@ long int find_valid_configs(int st_index)
 			}
 		}
 		if(valid_place == 1){
-//			printf("hi12\n");
 			broken_spr_arr[st_index].offset += 1;
 			valid_place = 0;
 			continue;
@@ -209,7 +198,6 @@ long int find_valid_configs(int st_index)
 
 		++valid_track;
 		deprint();
-//		printf("%ld\n", valid_track);
 		broken_spr_arr[st_index].offset += 1;
 	}
 
