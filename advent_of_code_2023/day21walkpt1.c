@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define QUQ_MAX 100000
+#define QUE_MAX 100000
 #define MAX_DIST 64
 
 typedef struct{
@@ -28,7 +28,7 @@ typedef struct{
 }node;
 
 path path_arr[200][200];
-node que[QUQ_MAX];
+node que[QUE_MAX];
 node start;
 int que_enter = 0;
 int next_in_que = 0;
