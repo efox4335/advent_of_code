@@ -15,7 +15,7 @@
 //number of internal garden plots form start to corner not including the start = (num_of_steps - 2(hight of plot - (s + 1)))/ hight of plot
 //number of total internal plots with the same
 //
-//start fill with dfs()
+//start fill with bfs()
 #include <stdio.h>
 #include <string.h>
 
@@ -44,7 +44,7 @@ int same_path_count = 0;
 
 int main(void)
 {
-	long int dfs(long int, long int, long int);
+	long int bfs(long int, long int, long int);
 
 	char *line = NULL;
 	size_t lim = 0;
@@ -82,8 +82,8 @@ int main(void)
 			for(int k = 0; k < 500; ++k)
 				cashe[i][j][k] = -1;
 
-	same_path_count = dfs(start.row, start.col, MAX_DIST);
-	diff_path_count = dfs(start.row, start.col, MAX_DIST - 1);
+	same_path_count = bfs(start.row, start.col, MAX_DIST);
+	diff_path_count = bfs(start.row, start.col, MAX_DIST - 1);
 	internal_plot_length = (MAX_DIST - 2 * (path_row_max - (start.row + 1))) / path_row_max;
 	printf("%d %d %ld\n", same_path_count, diff_path_count, internal_plot_length);
 
@@ -103,35 +103,35 @@ int main(void)
 	//gets corners
 	for(long int i = MAX_DIST - (path_row_max * internal_plot_length) - (path_row_max / 2) - 1; i > 0; i -= path_row_max){
 		printf("%ld\n", i);
-		num_of_paths += dfs(start.row, 0, i);
-		num_of_paths += dfs(start.row, path_col_max - 1, i);
-		num_of_paths += dfs(0, start.col, i);
-		num_of_paths += dfs(path_row_max - 1, start.col, i);
+		num_of_paths += bfs(start.row, 0, i);
+		num_of_paths += bfs(start.row, path_col_max - 1, i);
+		num_of_paths += bfs(0, start.col, i);
+		num_of_paths += bfs(path_row_max - 1, start.col, i);
 		upper_edge_off = i;
 		lower_edge_off = i + path_row_max;
 		if(i > path_row_max){
-			num_of_paths += dfs(0, 0, lower_edge_off - (path_row_max / 2) - 1);
-			num_of_paths += dfs(path_row_max - 1, 0, lower_edge_off - (path_row_max / 2) - 1);
-			num_of_paths += dfs(0, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1);
-			num_of_paths += dfs(path_row_max - 1, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1);
+			num_of_paths += bfs(0, 0, lower_edge_off - (path_row_max / 2) - 1);
+			num_of_paths += bfs(path_row_max - 1, 0, lower_edge_off - (path_row_max / 2) - 1);
+			num_of_paths += bfs(0, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1);
+			num_of_paths += bfs(path_row_max - 1, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1);
 		}
-		num_of_paths += dfs(0, 0, upper_edge_off - (path_row_max / 2) - 1);
-		num_of_paths += dfs(path_row_max - 1, 0, upper_edge_off - (path_row_max / 2) - 1);
-		num_of_paths += dfs(0, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
-		num_of_paths += dfs(path_row_max - 1, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
+		num_of_paths += bfs(0, 0, upper_edge_off - (path_row_max / 2) - 1);
+		num_of_paths += bfs(path_row_max - 1, 0, upper_edge_off - (path_row_max / 2) - 1);
+		num_of_paths += bfs(0, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
+		num_of_paths += bfs(path_row_max - 1, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
 	}
 
-	edge_size[0] = dfs(0, 0, lower_edge_off - (path_row_max / 2) - 1) +
-	dfs(0, 0, upper_edge_off - (path_row_max / 2) - 1);
+	edge_size[0] = bfs(0, 0, lower_edge_off - (path_row_max / 2) - 1) +
+	bfs(0, 0, upper_edge_off - (path_row_max / 2) - 1);
 
-	edge_size[1] = dfs(path_row_max - 1, 0, lower_edge_off - (path_row_max / 2) - 1) +
-	dfs(path_row_max - 1, 0, upper_edge_off - (path_row_max / 2) - 1);
+	edge_size[1] = bfs(path_row_max - 1, 0, lower_edge_off - (path_row_max / 2) - 1) +
+	bfs(path_row_max - 1, 0, upper_edge_off - (path_row_max / 2) - 1);
 
-	edge_size[2] = dfs(0, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1) +
-	dfs(0, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
+	edge_size[2] = bfs(0, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1) +
+	bfs(0, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
 
-	edge_size[3] = dfs(path_row_max - 1, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1) +
-	dfs(path_row_max - 1, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
+	edge_size[3] = bfs(path_row_max - 1, path_col_max - 1, lower_edge_off - (path_row_max / 2) - 1) +
+	bfs(path_row_max - 1, path_col_max - 1, upper_edge_off - (path_row_max / 2) - 1);
 
 	for(int i = 0; i < internal_plot_length; ++i){
 		num_of_paths += edge_size[0];
@@ -149,8 +149,8 @@ node que[QUE_MAX];
 int que_enter = 0;
 int next_in_que = 0;
 
-//does a dfs from st to end on graph
-long int dfs(long int st_row, long int st_col, long int local_max)
+//does a bfs from st to end on graph
+long int bfs(long int st_row, long int st_col, long int local_max)
 {
 	if(local_max <= 0)
 		return 0;
