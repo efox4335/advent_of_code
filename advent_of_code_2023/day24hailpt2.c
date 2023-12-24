@@ -115,6 +115,7 @@ void do_vec(vec in_vec, long double sca, long double *cord_arr)
 	cord_arr[2] = in_vec.start_z + (in_vec.z_vel * sca);
 }
 
+//https://www.youtube.com/watch?v=N-qUfr-rz_Y this algorithm
 int does_inter(vec *vp1, vec *vp2, long double *scale_1, long double *scale_2)
 {
 	int get_scale(vec *, vec *, long double *, long double *, int);
