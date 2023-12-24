@@ -77,35 +77,25 @@ int main(void)
 				vec_mod(&mod_1, i, j, k);
 				vec_mod(&mod_2, i, j, k);
 
-			//	printf("%d %d %d ", i, j, k);
-
 				if(does_inter(&mod_1, &mod_2, &pot_scale_1, &pot_scale_2)){
-					printf("\n%d %d %d ", i, j, k);
-					//printf("ee%Lf %Lf\n", pot_scale_1, pot_scale_2);
 					do_vec(mod_2, pot_scale_2, old_cord);
-					//printf("%Lf %Lf %Lf\n", old_cord[0], old_cord[1], old_cord[2]);
 					for(int h = 2; h < vec_num; ++h){
 						vec_cpy(&mod_1, &vec_array[h]);
-						vec_cpy(&mod_2, &vec_array[1]);
 
 						vec_mod(&mod_1, i, j, k);
-						vec_mod(&mod_2, i, j, k);
 
-
-						printf("hi\n");
 						does_inter(&mod_1, &mod_2, &pot_scale_1, &pot_scale_2);
 
-						printf("test scale %Lf %Lf\n", pot_scale_1, pot_scale_2);
 						do_vec(mod_1, pot_scale_1, new_cord);
-
-						printf("ended %Lf %Lf %Lf %d %d %d %Lf\n", new_cord[0], new_cord[1], new_cord[2], i, j, k,
-						new_cord[0] + new_cord[1] + new_cord[2]);
 
 						if(!does_match(old_cord, new_cord)){
 							break;
 						}
 						if(h == vec_num - 1){
-							printf("real ended %Lf %Lf %Lf %d %d %d\n", new_cord[0], new_cord[1], new_cord[2], i, j, k);
+							printf("starting point: %Lf %Lf %Lf\nangle thrown: %d %d %d\nsum: %Lf\n",
+							new_cord[0], new_cord[1],
+							new_cord[2], i, j, k,
+							new_cord[0] + new_cord[1] + new_cord[2]);
 							exit(0);
 						}
 					}
@@ -120,8 +110,6 @@ int main(void)
 //get output
 void do_vec(vec in_vec, long double sca, long double *cord_arr)
 {
-	//printf("vec_val%Lf %Lf %Lf %Lf %Lf %Lf %Lf\n", in_vec.start_x, in_vec.x_vel,
-	//in_vec.start_y, in_vec.y_vel, in_vec.start_z, in_vec.z_vel, sca);
 	cord_arr[0] = in_vec.start_x + (in_vec.x_vel * sca);
 	cord_arr[1] = in_vec.start_y + (in_vec.y_vel * sca);
 	cord_arr[2] = in_vec.start_z + (in_vec.z_vel * sca);
@@ -141,18 +129,9 @@ int does_inter(vec *vp1, vec *vp2, long double *scale_1, long double *scale_2)
 	else
 		is_good = get_scale(vp1, vp2, &pot_scale_1, &pot_scale_2, X_AND_Y);
 
-	//printf("%Lf %Lf\n", pot_scale_1, pot_scale_2);
-
-	if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-		printf("%Lf %Lf\n", pot_scale_1, pot_scale_2);
-	}
-
 	if(pot_scale_1 < 0 || pot_scale_2 < 0 || is_good != 1)
 		return 0;
 
-	if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-		printf("%Lf %Lf\n", pot_scale_1, pot_scale_2);
-	}
 	*scale_1 = pot_scale_1;
 	*scale_2 = pot_scale_2;
 	return 1;
@@ -189,17 +168,8 @@ int get_scale(vec *vp1, vec *vp2, long double *sc_1, long double *sc_2, int mode
 			f1 = vp1->z_vel;
 			f2 = vp2->z_vel;
 
-			/*if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-				printf("a1:%Lf d1:%Lf a2:%Lf d2:%Lf b1:%Lf e1:%Lf b2:%Lf e2:%Lf c1:%Lf f1:%Lf c2:%Lf f2:%Lf %Lf\n",
-				a1, d1, a2, d2, b1, e1, b2, e2, c1, f1, c2, f2,
-				(((e2 * a1) - (e2 * a2) - (d2 * b1) + (d2 * b2)) / ((d2 * e1) - (e2 * d1))));
-			}*/
-
 			*sc_1 = (((e2 * a1) - (e2 * a2) - (d2 * b1) + (d2 * b2)) / ((d2 * e1) - (e2 * d1)));
 
-			/*if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-				printf("%Lf\n", *sc_1);
-			}*/
 			break;
 
 		case X_AND_Z:
@@ -215,6 +185,7 @@ int get_scale(vec *vp1, vec *vp2, long double *sc_1, long double *sc_2, int mode
 			c2 = vp2->start_y;
 			f1 = vp1->y_vel;
 			f2 = vp2->y_vel;
+
 			*sc_1 = (((e2 * a1) - (e2 * a2) - (d2 * b1) + (d2 * b2)) / ((d2 * e1) - (e2 * d1)));
 			break;
 		case Y_AND_Z:
@@ -230,19 +201,12 @@ int get_scale(vec *vp1, vec *vp2, long double *sc_1, long double *sc_2, int mode
 			c2 = vp2->start_x;
 			f1 = vp1->x_vel;
 			f2 = vp2->x_vel;
+
 			*sc_1 = (((e2 * a1) - (e2 * a2) - (d2 * b1) + (d2 * b2)) / ((d2 * e1) - (e2 * d1)));
 			break;
 	}
 
-//	if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-//		printf("%Lf %Lf\n", *sc_1, *sc_2);
-//	}
-
 	*sc_2 = (a1 + (d1 * (*sc_1)) - a2) / d2;
-
-//	if(vp1->x_vel == 2 && vp1->y_vel == -2 && vp1->z_vel == -4){
-//		printf("%Lf %Lf\n", *sc_1, *sc_2);
-//	}
 
 	if(fabs(c1 - (c2 + (f2 * (*sc_2)) - (f1 * (*sc_1)))) < 1)
 		return 1;
