@@ -242,7 +242,7 @@ struct table_line *get_table(void)
 compare value of input_start in struct table_line for qsort
 a and b cast at pointer to pointer to struct and dereferenced once with * to pointer to struct
 element is accessed by ->
-if else because qsort only accepts values 1, 0, -1
+if else because qsort only accepts values 1, 0, -1 i've since learned this isn't true i'm not fixing it
 */
 int table_sort_cmp(const void *a, const void *b)
 {
