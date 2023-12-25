@@ -55,6 +55,7 @@ int main(void)
 		++node_num;
 	}
 
+	//adds connections for all inputs
 	for(int i = 0; i < node_num; ++i){
 		add_con(&node_arr[i]);
 	}
@@ -68,11 +69,13 @@ int main(void)
 		printf("\n");
 	}
 
+	//gets shortest discance between every node
 	for(int i = 0; i < node_num; ++i){
 		for(int j = i + 1; j < node_num; ++j)
 			bfs(&node_arr[i], &node_arr[j]);
 	}
 
+	//gets the 3 most traveled paths
 	for(int i = 0; i < con_num; ++i){
 		printf("%s %s %d\n", path_arr[i].node_1->name, path_arr[i].node_2->name, path_arr[i].num);
 
@@ -90,6 +93,7 @@ int main(void)
 		}
 	}
 
+	//removes node and gets size of new disconnected graphs
 	printf("%d %d %d\n", path_arr[biggest_ind[0]].num, path_arr[biggest_ind[1]].num, path_arr[biggest_ind[2]].num);
 	path_arr[biggest_ind[0]].num = -1;
 	path_arr[biggest_ind[1]].num = -1;
@@ -103,7 +107,7 @@ int main(void)
 	return 0;
 }
 
-//finds shortest distance between a and b and adds the paths to path_arr
+//finds the number of nodes that can be gotten to from a
 int count_bfs(struct node *a)
 {
 	typedef struct{
@@ -233,6 +237,7 @@ struct node *find_node(char *name)
 		if(!strcmp(node_arr[i].name, name))
 			return &node_arr[i];
 
+	//if a node is found only in connections it is added here
 	node_arr[node_num].name = strdup(name);
 	node_arr[node_num].con_count = 0;
 	node_arr[node_num].has_been = 0;

@@ -68,6 +68,7 @@ int main(void)
 
 	//printf("%Lf %Lf %Lf\n", pot_x, pot_y, pot_z);
 
+	//searches all modifications of vectors between search_min and search_max
 	for(int i = SEARCH_MIN; i < SEARCH_MAX; ++i){
 		for(int j = SEARCH_MIN; j < SEARCH_MAX; ++j){
 			for(int k = SEARCH_MIN; k < SEARCH_MAX; ++k){
@@ -77,6 +78,7 @@ int main(void)
 				vec_mod(&mod_1, i, j, k);
 				vec_mod(&mod_2, i, j, k);
 
+				//if 2 intersections are found checks the rest against the second hail
 				if(does_inter(&mod_1, &mod_2, &pot_scale_1, &pot_scale_2)){
 					do_vec(mod_2, pot_scale_2, old_cord);
 					for(int h = 2; h < vec_num; ++h){
