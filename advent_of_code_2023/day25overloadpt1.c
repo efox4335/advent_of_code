@@ -1,6 +1,6 @@
 //import graph
-//do Stoer-Wagner algorithm to find group with the least cuts count size of group
-//multiply by the ammount of nodes not in group
+//find the shortest path between every node and mark the most traveled paths
+//i don't this works for all inputs
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,9 +30,7 @@ path path_arr[5000];
 int main(void)
 {
 	void add_con(struct node *);
-//	void merge(struct node *, struct node *);
 	void bfs(struct node *, struct node *);
-	int comp(const void *, const void *);
 	int count_bfs(struct node *);
 
 	char *line = NULL;
@@ -58,15 +56,8 @@ int main(void)
 	}
 
 	for(int i = 0; i < node_num; ++i){
-	//	printf("%s : ", node_arr[i].name);
-	//	for(int j = 0; j < node_arr[i].con_count; ++j)
-	//		printf("%s ", node_arr[i].con_name[j]);
-	//	printf("\n");
-
 		add_con(&node_arr[i]);
 	}
-
-	//printf("%s\n", node_arr[2].name);
 
 	for(int i = 0; i < node_num; ++i){
 		printf("%s : ", node_arr[i].name);
@@ -81,8 +72,6 @@ int main(void)
 		for(int j = i + 1; j < node_num; ++j)
 			bfs(&node_arr[i], &node_arr[j]);
 	}
-
-	//qsort(path_arr, con_num, sizeof(path), comp);
 
 	for(int i = 0; i < con_num; ++i){
 		printf("%s %s %d\n", path_arr[i].node_1->name, path_arr[i].node_2->name, path_arr[i].num);
@@ -109,7 +98,7 @@ int main(void)
 	store = count_bfs(&node_arr[0]);
 	store_b = node_num - store;
 
-	printf("%d %d %d %d\n", store, store_b, node_num, store * store_b);
+	printf("%d %d %d\nfinal value: %d\n", store, store_b, node_num, store * store_b);
 
 	return 0;
 }
@@ -190,7 +179,6 @@ void bfs(struct node *a, struct node *b)
 
 	while((curr_node = open_list[current_place].curr_node) != b){
 		for(int i = 0; i < curr_node->real_con_count; ++i){
-			//printf("%d\n", i);
 			if(curr_node->connections[i]->has_been == 0){
 				open_list[open_que].call_node = curr_node;
 				open_list[open_que].curr_node = curr_node->connections[i];
@@ -200,15 +188,11 @@ void bfs(struct node *a, struct node *b)
 				++open_que;
 			}
 		}
-		//printf("%d %d\n", current_place, open_que);
-		//printf("%s %s %s\n", a->name, b->name, open_list[current_place].curr_node->name);
 		++current_place;
 
 		if(current_place == open_que)
 			return;
 	}
-
-//	printf("%s %s %s\n", a->name, b->name, open_list[current_place].curr_node->name);
 
 	for(back_track = current_place; open_list[back_track].call_node != NULL; back_track = open_list[back_track].call_id)
 		path_arr[open_list[back_track].trav_id].num += 1;
@@ -258,94 +242,3 @@ struct node *find_node(char *name)
 
 	return &node_arr[node_num - 1];
 }
-
-int comp(const void *a, const void *b)
-{
-	return (((path *) b)->num - ((path *) a)->num);
-}
-
-/*
-//gets the new node to add to group
-struct node *get_new_add(struct node *start)
-{
-	struct conn{
-		int weight;
-		struct node *out;
-
-	};
-
-	struct node *group[2000];
-	int group_size = 0;
-
-	//while(group_size != )
-}
-
-void copy_node_arr(struct node *a, struct node)
-{
-
-}
-
-//add connections from b to a and removes connection a to b
-void merge(struct node *a, struct node *b)
-{
-	int does_connect(struct node *, struct node *);
-	void add_weight(struct node *, struct node *, struct node *, int b_to_c);
-
-	int disscon = does_connect(a, b);
-	a->weight[disscon] = -1;
-
-	for(int i = 0; i < b->real_con_count; ++b){
-		add_weight(a, b, b->connections[i], i);
-	}
-}
-
-//checks if node a and b connect to node c if they do adds sum of a and b weight to a and b weight
-void add_weight(struct node *a, struct node *b, struct node *c, int b_to_c)
-{
-	static int count = 0;
-	count++;
-	int does_connect(struct node *, struct node *);
-
-	int a_to_c = does_connect(a, c);
-	printf("in1\n");
-	int c_to_b = does_connect(c, b);
-	printf("in2\n");
-	int c_to_a = does_connect(c, a);
-	printf("in3\n");
-
-	if(a_to_c != -1){
-		printf("ee%s %s %s %d\n", a->name, b->name, c->name, count);
-		a->weight[a_to_c] += b->weight[b_to_c];
-		c->weight[c_to_a] = a->weight[a_to_c] + b->weight[b_to_c];
-		c->weight[c_to_b] = -1;
-	}
-	else{
-		printf("ee%s %s %s %d\n", a->name, b->name, c->name, count);
-		a_to_c = a->real_con_count;
-		c_to_a = c->real_con_count;
-
-		a->weight[a_to_c] = b->weight[b_to_c];
-		a->connections[a_to_c] = c;
-		c->weight[c_to_a] = b->weight[b_to_c];
-		c->connections[c_to_a] = a;
-		c->weight[c_to_b] = -1;
-
-		a->real_con_count += 1;
-		c->real_con_count += 1;
-	}
-
-}
-
-//checks if node a and node b connect and returns the index of the connection in a
-int does_connect(struct node *a, struct node *b)
-{
-	for(int i = 0; i < a->real_con_count; ++i){
-		if(a->connections[i] == b){
-			printf("con: %s %s %s\n", a->name, b->name, a->connections[i]->name);
-			return i;
-		}
-	}
-	printf("not found %s %s\n", a->name, b->name);
-	return -1;
-}
-*/
