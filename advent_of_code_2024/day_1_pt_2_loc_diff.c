@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "include/edsa.h"
 
 int cmp_func(const void *arg1, const void *arg2)
 {
@@ -25,16 +26,28 @@ int main(void)
 	char *input_line = NULL;
 	size_t lim = 0;
 
+	edsa_htable *hash_table = NULL;
+	edsa_htable_init(&hash_table, sizeof(int), sizeof(int), 1000);
+
 	while(getline(&input_line, &lim, stdin) > 1){
 		val = strtok_r(input_line, " \n", &save_ptr);
 		left_nums[line_count] = atoi(val);
 
 		val = strtok_r(NULL, " \n", &save_ptr);
+		int key_buff = atoi(val);
+		int data_buff = 0;
+		size_t ret_val = 0;
+		ret_val = edsa_htable_read(hash_table, &key_buff, &data_buff);//checks if there is already an entry for key_buff
+		if(ret_val == EDSA_HTABLE_READ_NO_ENTRY){
+			data_buff = 1;
+		}else{
+			++data_buff;
+		}
+
+		edsa_htable_ins(hash_table, &key_buff, &data_buff);
 
 		++line_count;
 	}
-
-	qsort(left_nums, line_count, sizeof(int), cmp_func);
 
 	free(input_line);
 	return 0;
