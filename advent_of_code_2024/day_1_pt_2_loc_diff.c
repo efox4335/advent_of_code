@@ -49,6 +49,23 @@ int main(void)
 		++line_count;
 	}
 
+	int sum = 0;
+
+	for(int i = 0; i < line_count; ++i){
+		int count = 0;
+		size_t ret_val = 0;
+
+		ret_val = edsa_htable_read(hash_table, &(left_nums[i]), &count);
+
+		if(ret_val == EDSA_HTABLE_READ_NO_ENTRY){//equivalent to multpilying by 0 for number that don't appear in right nums
+			continue;
+		}
+
+		sum += (left_nums[i] * count);
+	}
+
+	printf("%d\n", sum);
+
 	edsa_htable_free(hash_table);
 	free(input_line);
 	return 0;
