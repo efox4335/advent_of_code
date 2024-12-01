@@ -37,6 +37,14 @@ int main(void)
 	qsort(left_nums, line_count, sizeof(int), cmp_func);
 	qsort(right_nums, line_count, sizeof(int), cmp_func);
 
+	int diff = 0;
+
+	for(int i = 0; i < line_count; ++i){
+		diff += abs(left_nums[i] - right_nums[i]);
+	}
+
+	printf("%d\n", diff);
+
 	free(input_line);
 	return 0;
 }
