@@ -6,6 +6,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+int cmp_func(const void *arg1, const void *arg2)
+{
+	return *((int *) arg1) > *((int *) arg2);
+}
+
 int main(void)
 {
 	enum{INPUT_LINE_COUNT = 1000};
@@ -28,6 +33,9 @@ int main(void)
 
 		++line_count;
 	}
+
+	qsort(left_nums, line_count, sizeof(int), cmp_func);
+	qsort(right_nums, line_count, sizeof(int), cmp_func);
 
 	free(input_line);
 	return 0;
