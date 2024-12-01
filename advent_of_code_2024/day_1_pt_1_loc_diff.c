@@ -8,8 +8,10 @@
 
 int main(void)
 {
-	int left_nums[1000];
-	int right_nums[1000];
+	enum{INPUT_LINE_COUNT = 1000};
+
+	int left_nums[INPUT_LINE_COUNT];
+	int right_nums[INPUT_LINE_COUNT];
 	char *save_ptr = NULL;
 	char *val = NULL;
 	int line_count = 0;
