@@ -9,11 +9,6 @@
 #include <string.h>
 #include "include/edsa.h"
 
-int cmp_func(const void *arg1, const void *arg2)
-{
-	return *((int *) arg1) > *((int *) arg2);
-}
-
 int main(void)
 {
 	enum{INPUT_LINE_COUNT = 1000};
