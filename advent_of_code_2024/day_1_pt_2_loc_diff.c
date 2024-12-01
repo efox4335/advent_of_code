@@ -49,6 +49,7 @@ int main(void)
 		++line_count;
 	}
 
+	edsa_htable_free(hash_table);
 	free(input_line);
 	return 0;
 }
