@@ -9,6 +9,65 @@
 #include <stdlib.h>
 #include <string.h>
 
+//returns index of unsafe level on fail report_len on success
+int report_safe(int *report, int report_len)
+{
+	enum{INC, DEC};
+
+	int level_1 = 0;
+	int level_2 = 0;
+	int report_index = 0;
+
+	level_1 = report[report_index];
+	++report_index;
+	level_2 = report[report_index];
+	++report_index;
+
+	int level_dif = level_1 - level_2;
+	int report_type = 0;
+
+	switch(level_dif){
+		case -3:
+		case -2:
+		case -1:
+			report_type = INC;
+			break;
+		case 3:
+		case 2:
+		case 1:
+			report_type = DEC;
+			break;
+		default://unsafe
+			return report_index - 1;
+	}
+
+	if(report_type == DEC){
+		while(report_index < report_len){
+			level_1 = level_2;
+			level_2 = report[report_index];
+			++report_index;
+			level_dif = level_1 - level_2;
+
+			if(level_dif <= 0 || level_dif >= 4){
+				return report_index - 1;
+			}
+		}
+	}else{
+		while(report_index < report_len){
+			level_1 = level_2;
+			level_2 = report[report_index];
+			++report_index;
+			level_dif = level_1 - level_2;
+
+			if(level_dif >= 0 || level_dif <= -4){
+				return report_index - 1;;
+			}
+		}
+	}
+
+	return report_len;
+}
+
 int main(void)
 {
 	char *str = NULL;
