@@ -5,6 +5,26 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+//returns 1 if report is safe returns 0 if not
+int report_safe(char *report)
+{
+	enum{INC, DEC};
+
+	int level_1 = 0;
+	int level_2 = 0;
+
+	char *level_ptr = NULL;
+	char *save_ptr = NULL;
+	char delim[] = " \n";
+
+	level_ptr = strtok_r(report, delim, &save_ptr);
+	level_1 = atoi(level_ptr);
+	level_ptr = strtok_r(NULL, delim, &save_ptr);
+	level_2 = atoi(level_ptr);
+
+}
 
 int main(void)
 {
@@ -12,6 +32,7 @@ int main(void)
 	size_t lim = 0;
 
 	while(getline(&str, &lim, stdin) > 1){
+		report_safe(str);
 	}
 
 	free(str);
