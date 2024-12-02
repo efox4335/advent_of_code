@@ -24,6 +24,47 @@ int report_safe(char *report)
 	level_ptr = strtok_r(NULL, delim, &save_ptr);
 	level_2 = atoi(level_ptr);
 
+	int level_dif = level_1 - level_2;
+	int report_type = 0;
+
+	switch(level_dif){
+		case -3:
+		case -2:
+		case -1:
+			report_type = INC;
+			break;
+		case 3:
+		case 2:
+		case 1:
+			report_type = DEC;
+			break;
+		default://unsafe
+			return 0;
+	}
+
+	if(report_type == DEC){
+		while((level_ptr = strtok_r(NULL, delim, &save_ptr)) != NULL){
+			level_1 = level_2;
+			level_2 = atoi(level_ptr);
+			level_dif = level_1 - level_2;
+
+			if(level_dif <= 0 || level_dif >= 4){
+				return 0;
+			}
+		}
+	}else{
+		while((level_ptr = strtok_r(NULL, delim, &save_ptr)) != NULL){
+			level_1 = level_2;
+			level_2 = atoi(level_ptr);
+			level_dif = level_1 - level_2;
+
+			if(level_dif >= 0 || level_dif <= -4){
+				return 0;
+			}
+		}
+	}
+
+	return 1;
 }
 
 int main(void)
@@ -32,7 +73,6 @@ int main(void)
 	size_t lim = 0;
 
 	while(getline(&str, &lim, stdin) > 1){
-		report_safe(str);
 	}
 
 	free(str);
