@@ -71,9 +71,13 @@ int main(void)
 {
 	char *str = NULL;
 	size_t lim = 0;
+	int safe_report_count = 0;
 
 	while(getline(&str, &lim, stdin) > 1){
+		safe_report_count += report_safe(str);
 	}
+
+	printf("%d\n", safe_report_count);
 
 	free(str);
 	return 0;
