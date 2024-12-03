@@ -25,4 +25,15 @@ fn main() {
             }
         }
     }
+
+    left_nums.sort();
+    right_nums.sort();
+
+    let mut dif_sum:i64 = 0;
+
+    for num in left_nums.iter().enumerate(){
+        dif_sum += (left_nums[num.0] - right_nums[num.0]).abs();
+    }
+
+    println!("{}", dif_sum);
 }
