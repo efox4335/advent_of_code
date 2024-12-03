@@ -24,18 +24,28 @@ int num_to_str(char *input, char *buff)
 void get_nums(char *input, int *arg_1, int *arg_2)
 {
 	char buff[4];
-	int num_len;
+	int num_len_arg_1;
+	int num_len_arg_2;
 
-	num_len = num_to_str(input + 4, buff);
-	if(num_len <= 0 || num_len >= 4){
+	num_len_arg_1 = num_to_str(input + 4, buff);
+	if(num_len_arg_1 <= 0 || num_len_arg_1 >= 4){
 		goto num_error;
 	}
 	*arg_1 = atoi(buff);
 
-	num_len = num_to_str(input + 4 + num_len + 1, buff);
-	if(num_len <= 0 || num_len >= 4){
+	if(input[4 + num_len_arg_1] != ','){
 		goto num_error;
 	}
+
+	num_len_arg_2 = num_to_str(input + 4 + num_len_arg_1 + 1, buff);
+	if(num_len_arg_2 <= 0 || num_len_arg_2 >= 4){
+		goto num_error;
+	}
+
+	if(input[4 + num_len_arg_1 + 1 + num_len_arg_2] != ')'){
+		goto num_error;
+	}
+
 	*arg_2 = atoi(buff);
 
 	return;
