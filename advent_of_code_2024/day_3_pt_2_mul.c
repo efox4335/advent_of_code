@@ -63,15 +63,19 @@ int main(void)
 	char *mul_ptr = NULL;
 	int arg_1 = 0;
 	int arg_2 = 0;
+	int prod_sum = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
 		mul_ptr = strstr(input_line, find);
 
 		while(mul_ptr != NULL){
 			get_nums(mul_ptr, &arg_1, &arg_2);
+			prod_sum += arg_1 * arg_2;
 			mul_ptr = strstr(mul_ptr + 1, find);//skips past the last found "mul("
 		}
 	}
+
+	printf("%d\n", prod_sum);
 
 	free(input_line);
 	return 0;
