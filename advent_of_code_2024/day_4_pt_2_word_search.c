@@ -81,6 +81,22 @@ typedef struct{
 	int col;
 }cords;
 
+//transforms a set of cords for an element in pos slope diagonal transformation to untransformed input
+cords pos_slope_trans_to_norm(cords diag_cords, int line_count)
+{
+	cords norm;
+
+	if(diag_cords.row >= line_count){
+		norm.row = diag_cords.row - (diag_cords.col + diag_cords.row - line_count + 1);
+		norm.col = diag_cords.col + diag_cords.row - line_count + 1;
+	}else{
+		norm.row = diag_cords.row - diag_cords.col;//every col to the right gets shifed down one row
+		norm.col = diag_cords.col;
+	}
+
+	return norm;
+}
+
 int main(void)
 {
 	int line_count = 0;
