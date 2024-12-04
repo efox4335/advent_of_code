@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "include/edsa.h"
 
 enum{BUFFER_LEN = 1000};
 
@@ -132,30 +133,56 @@ int main(void)
 	char trans_line[BUFFER_LEN];
 	int xxmas_count = 0;
 
+	//size_t ret_val = 0;
+	edsa_htable *table = NULL;
+	edsa_htable_init(&table, sizeof(cords), sizeof(char), 100);
+
 	for(int i = 0; transform_diag_neg_slope(input, trans_line, line_count, i) > 0; ++i){
+		cords norm;
+		cords diag;
+		char found = 1;
 		char *temp_line_ptr = strstr(trans_line, fw_match);
 		while(temp_line_ptr != NULL){
-			++xxmas_count;
+			diag.row = i;
+			diag.col = (temp_line_ptr - trans_line) + 1;//one added so it centers on the 'a'
+			norm = neg_slope_trans_to_norm(diag, line_count);
+			edsa_htable_ins(table, &norm, &found);
 			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
 		}
 
 		temp_line_ptr = strstr(trans_line, bw_match);
 		while(temp_line_ptr != NULL){
-			++xxmas_count;
+			diag.row = i;
+			diag.col = (temp_line_ptr - trans_line) + 1;//one added so it centers on the 'a'
+			norm = neg_slope_trans_to_norm(diag, line_count);
+			edsa_htable_ins(table, &norm, &found);
 			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
 		}
 	}
 
 	for(int i = 0; transform_diag_pos_slope(input, trans_line, line_count, i) > 0; ++i){
+		cords norm;
+		cords diag;
+		char ret = 0;
 		char *temp_line_ptr = strstr(trans_line, fw_match);
 		while(temp_line_ptr != NULL){
-			++xxmas_count;
+			diag.row = i;
+			diag.col = (temp_line_ptr - trans_line) + 1;//one added so it centers on the 'a'
+			norm = pos_slope_trans_to_norm(diag, line_count);
+			if(edsa_htable_read(table, &norm, &ret) == EDSA_SUCCESS){//if there is already an entry for that a
+				++xxmas_count;
+			}
 			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
 		}
 
 		temp_line_ptr = strstr(trans_line, bw_match);
 		while(temp_line_ptr != NULL){
-			++xxmas_count;
+			diag.row = i;
+			diag.col = (temp_line_ptr - trans_line) + 1;//one added so it centers on the 'a'
+			norm = pos_slope_trans_to_norm(diag, line_count);
+			if(edsa_htable_read(table, &norm, &ret) == EDSA_SUCCESS){//if there is already an entry for that a
+				++xxmas_count;
+			}
 			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
 		}
 	}
