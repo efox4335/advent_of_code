@@ -108,6 +108,71 @@ int main(void)
 		++line_count;
 	}
 
+	const char *fw_match = "XMAS";
+	const char *bw_match = "SAMX";
+
+	char trans_line[BUFFER_LEN];
+	int match_count = 0;
+
+	for(int i = 0; transform_diag_neg_slope(input, trans_line, line_count, i) > 0; ++i){
+		char *temp_line_ptr = strstr(trans_line, fw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
+		}
+
+		temp_line_ptr = strstr(trans_line, bw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
+		}
+	}
+
+	for(int i = 0; transform_diag_pos_slope(input, trans_line, line_count, i) > 0; ++i){
+		char *temp_line_ptr = strstr(trans_line, fw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
+		}
+
+		temp_line_ptr = strstr(trans_line, bw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
+		}
+	}
+
+	for(int i = 0; i < line_count; ++i){
+		transform_rot(input, trans_line, line_count, i);
+		char *temp_line_ptr = strstr(trans_line, fw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
+		}
+
+		temp_line_ptr = strstr(trans_line, bw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
+		}
+	}
+
+	for(int i = 0; i < line_count; ++i){
+		char *temp_line_ptr = strstr(input[i], fw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, fw_match);
+		}
+
+		temp_line_ptr = strstr(input[i], bw_match);
+		while(temp_line_ptr != NULL){
+			++match_count;
+			temp_line_ptr = strstr(temp_line_ptr + 1, bw_match);
+		}
+	}
+
+	printf("%d\n", match_count);
+
 	free(input_line);
 	return 0;
 }
