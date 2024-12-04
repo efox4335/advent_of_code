@@ -78,6 +78,23 @@ int transform_diag_neg_slope(char input[BUFFER_LEN][BUFFER_LEN], char *output_li
 	return index;
 }
 
+//rotates 90 degrees counter clock wise
+int transform_rot(char input[BUFFER_LEN][BUFFER_LEN], char *output_line, int input_line_length, int trans_line_index)
+{
+	int row = 0;
+	int col = input_line_length - trans_line_index - 1;
+
+	int index = 0;
+
+	for(; row < input_line_length; ++row, ++index){
+		output_line[index] = input[row][col];
+	}
+
+	output_line[index] = '\0';
+
+	return index;
+}
+
 int main(void)
 {
 	int line_count = 0;
