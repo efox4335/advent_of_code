@@ -94,8 +94,8 @@ int main(void)
 		++line_count;
 	}
 
-	const char *fw_match = "XMAS";
-	const char *bw_match = "SAMX";
+	const char *fw_match = "MAS";
+	const char *bw_match = "SAM";
 
 	char trans_line[BUFFER_LEN];
 	int xxmas_count = 0;
