@@ -5,7 +5,7 @@
  * 	cd
  * becomes
  * 	a
- * 	bc
+ * 	cb
  * 	 d
  * and
  * 	 b
