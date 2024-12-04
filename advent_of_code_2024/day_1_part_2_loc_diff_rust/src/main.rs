@@ -1,5 +1,6 @@
 /*
  * parse input into vector of strings put both lists of nums in a hash map recording the number of occurrences when a val is found add the product of the val and the number of occurrences in the other array and add that to the product
+ * this works because mul(a, b) = mul(a - 1, b) + b and the final product for each number takes the form num(left_num_count * right_num_count)
 */
 use std::io;
 use std::collections::HashMap;
