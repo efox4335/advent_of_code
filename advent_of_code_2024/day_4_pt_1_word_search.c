@@ -50,6 +50,34 @@ int transform_diag_pos_slope(char input[BUFFER_LEN][BUFFER_LEN], char *output_li
 	return index;
 }
 
+//transforms input so that diagonal lines with slope = -1 have slope = 0
+//outputs one line of transformed input based on trans_line_index
+//returns the number of chars in output_line
+int transform_diag_neg_slope(char input[BUFFER_LEN][BUFFER_LEN], char *output_line, int input_line_length, int trans_line_index)
+{
+	int row = 0;
+	int col = 0;
+
+	if(trans_line_index < input_line_length){//if the starting point for the diagonal is on the top
+		row = 0;
+		col = input_line_length - trans_line_index - 1;
+	}else{
+		row = trans_line_index - input_line_length + 1;
+		col = 0;
+	}
+
+	int index = 0;
+
+	//since input is square it can bound col
+	for(;row < input_line_length && col < input_line_length; ++row, ++col, ++index){
+		output_line[index] = input[row][col];
+	}
+
+	output_line[index] = '\0';
+
+	return index;
+}
+
 int main(void)
 {
 	int line_count = 0;
