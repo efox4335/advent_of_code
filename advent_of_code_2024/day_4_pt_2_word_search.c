@@ -76,6 +76,11 @@ int transform_diag_neg_slope(char input[BUFFER_LEN][BUFFER_LEN], char *output_li
 	return index;
 }
 
+typedef struct{
+	int row;
+	int col;
+}cords;
+
 int main(void)
 {
 	int line_count = 0;
