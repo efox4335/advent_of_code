@@ -97,6 +97,22 @@ cords pos_slope_trans_to_norm(cords diag_cords, int line_count)
 	return norm;
 }
 
+//transforms a set of cords for an element in neg slope diagonal transformation to untransformed input
+cords neg_slope_trans_to_norm(cords diag_cords, int line_count)
+{
+	cords norm;
+
+	if(diag_cords.row < line_count){
+		norm.row = diag_cords.col;
+		norm.col = diag_cords.col + (line_count - 1 - diag_cords.row);
+	}else{
+		norm.row = diag_cords.row - (line_count - 1 - diag_cords.col);
+		norm.col = diag_cords.col;
+	}
+
+	return norm;
+}
+
 int main(void)
 {
 	int line_count = 0;
