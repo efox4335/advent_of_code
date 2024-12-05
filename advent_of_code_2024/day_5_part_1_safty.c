@@ -6,10 +6,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+typedef struct{
+	int rule_count;
+	int rules[100];
+}rule;
+
+enum{RULE_NUM = 100};//no rule left value > 99
+
+void reset_rules(rule *rule_arr){
+	for(int i = 0; i < RULE_NUM; ++i){
+		rule_arr[i].rule_count = 0;
+	}
+}
+
 int main(void)
 {
 	char *input_line = NULL;
 	size_t lim = 0;
+
+	rule rule_arr[RULE_NUM];
+	reset_rules(rule_arr);
 
 	while(getline(&input_line, &lim, stdin) > 0){
 	}
