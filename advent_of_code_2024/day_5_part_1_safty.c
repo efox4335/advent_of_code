@@ -20,6 +20,13 @@ void reset_rules(rule *rule_arr)
 	}
 }
 
+//appends rule to list of rules
+void rule_append(rule *rule_ptr, int rule_num)
+{
+	rule_ptr->rules[rule_ptr->rule_count] = rule_num;
+	++(rule_ptr->rule_count);
+}
+
 int main(void)
 {
 	char *input_line = NULL;
