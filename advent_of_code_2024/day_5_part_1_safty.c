@@ -5,6 +5,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct{
 	int rule_count;
@@ -29,13 +30,32 @@ void rule_append(rule *rule_ptr, int rule_num)
 
 int main(void)
 {
+	enum{RULES, UPDATES};
+
 	char *input_line = NULL;
 	size_t lim = 0;
 
 	rule rule_arr[RULE_NUM];
 	reset_rules(rule_arr);
 
+	char rule_delim[] = "|";
+	char *num_ptr = NULL;
+	int right_rule = 0;
+
+	int input_part = RULES;
+
 	while(getline(&input_line, &lim, stdin) > 0){
+		if(input_line[0] == '\n'){
+			input_part = UPDATES;
+		}
+
+		if(input_part == RULES){
+			num_ptr = strtok(input_line, rule_delim);
+			right_rule = atoi(num_ptr);
+
+			num_ptr = strtok(NULL, rule_delim);
+			rule_append(&rule_arr[right_rule], atoi(num_ptr));
+		}
 	}
 
 	free(input_line);
