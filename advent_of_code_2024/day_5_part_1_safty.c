@@ -13,7 +13,8 @@ typedef struct{
 
 enum{RULE_NUM = 100};//no rule left value > 99
 
-void reset_rules(rule *rule_arr){
+void reset_rules(rule *rule_arr)
+{
 	for(int i = 0; i < RULE_NUM; ++i){
 		rule_arr[i].rule_count = 0;
 	}
