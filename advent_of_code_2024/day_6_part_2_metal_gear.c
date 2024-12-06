@@ -31,8 +31,7 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 		case '^':
 			if(input[guard_pos.row - 1][guard_pos.col] != '.'){
 				input[guard_pos.row][guard_pos.col] = '.';
-				input[guard_pos.row][guard_pos.col + 1] = '>';
-				guard_pos.col += 1;
+				input[guard_pos.row][guard_pos.col] = '>';
 				return guard_pos;
 			}else{
 				input[guard_pos.row][guard_pos.col] = '.';
@@ -43,8 +42,7 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 		case '>':
 			if(input[guard_pos.row][guard_pos.col + 1] != '.'){
 				input[guard_pos.row][guard_pos.col] = '.';
-				input[guard_pos.row + 1][guard_pos.col] = 'v';
-				guard_pos.row += 1;
+				input[guard_pos.row][guard_pos.col] = 'v';
 				return guard_pos;
 			}else{
 				input[guard_pos.row][guard_pos.col] = '.';
@@ -55,8 +53,7 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 		case '<':
 			if(input[guard_pos.row][guard_pos.col - 1] != '.'){
 				input[guard_pos.row][guard_pos.col] = '.';
-				input[guard_pos.row - 1][guard_pos.col] = '^';
-				guard_pos.row -= 1;
+				input[guard_pos.row][guard_pos.col] = '^';
 				return guard_pos;
 			}else{
 				input[guard_pos.row][guard_pos.col] = '.';
@@ -67,8 +64,7 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 		case 'v':
 			if(input[guard_pos.row + 1][guard_pos.col] != '.'){
 				input[guard_pos.row][guard_pos.col] = '.';
-				input[guard_pos.row][guard_pos.col - 1] = '<';
-				guard_pos.col -= 1;
+				input[guard_pos.row][guard_pos.col] = '<';
 				return guard_pos;
 			}else{
 				input[guard_pos.row][guard_pos.col] = '.';
@@ -82,11 +78,13 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 	return bad_val;
 }
 
-void clear_prev_pos (char prev_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE])
+void clear_prev_pos (char prev_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE][128])
 {
 	for(int i = 0; i < INPUT_BUFF_SIZE; ++i){
 		for(int k = 0; k < INPUT_BUFF_SIZE; ++k){
-			prev_pos[i][k] = '.';
+			for(int j = 0; j < 128; ++j){
+				prev_pos[i][k][j] = 0;
+			}
 		}
 	}
 }
@@ -115,23 +113,24 @@ int main(void)
 		++line_count;
 	}
 
-	char prev_guard_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE];
+	char prev_guard_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE][128];
 
 	clear_prev_pos(prev_guard_pos);
 
 	//set to 1 to count inital pos
-	int path_len = 1;
+	int block_spots_count = 0;
 	//input is square so line count == col length
 	while(guard_pos.col != 0 && guard_pos.col < line_count - 1 && guard_pos.row != 0 && guard_pos.row < line_count - 1){
-		prev_guard_pos[guard_pos.row][guard_pos.col] = input[guard_pos.row][guard_pos.col];
+		prev_guard_pos[guard_pos.row][guard_pos.col][(int) input[guard_pos.row][guard_pos.col]] = 1;
 		guard_pos = move_guard(input, guard_pos);
 
-		if(prev_guard_pos[guard_pos.row][guard_pos.col] == '.'){
-			++path_len;
+		if(prev_guard_pos[guard_pos.row][guard_pos.col][(int) input[guard_pos.row][guard_pos.col]] == 1){
+			++block_spots_count;
+			break;
 		}
 	}
 
-	printf("%d\n", path_len);
+	printf("%d\n", block_spots_count);
 
 	free(input_line);
 	return 0;
