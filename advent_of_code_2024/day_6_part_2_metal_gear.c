@@ -124,6 +124,9 @@ int main(void)
 	input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
 	input[guard_pos.row][guard_pos.col] = '.';//erase last guard pos
 
+	edsa_htable *move_guard_cashe = NULL;
+	edsa_htable_init(&move_guard_cashe, sizeof(cords), sizeof(cords), 100);
+
 	//set to 1 to count inital pos
 	int block_spots_count = 0;
 	//input is square so line count == col length
@@ -157,7 +160,20 @@ int main(void)
 				state.dir = input[guard_pos.row][guard_pos.col];
 				edsa_htable_ins(pos_hash, &state, &def_value);
 
-				guard_pos = move_guard(input, guard_pos);
+				//cashe move_guard output if it is not in line with inserted box
+				if(guard_pos.row == i || guard_pos.col == j){
+					guard_pos = move_guard(input, guard_pos);
+				}else{
+					cords temp = guard_pos;
+					//if guard pos has already been called with the same arguments
+					if(edsa_htable_read(move_guard_cashe, &guard_pos, &temp) == EDSA_SUCCESS){
+						guard_pos = temp;
+					}else{
+						temp = move_guard(input, guard_pos);
+						edsa_htable_ins(move_guard_cashe, &move_guard, &temp);
+						guard_pos = temp;
+					}
+				}
 
 				state.guard_pos = guard_pos;
 				state.dir = input[guard_pos.row][guard_pos.col];
@@ -178,6 +194,7 @@ int main(void)
 
 	printf("%d\n", block_spots_count);
 
+	edsa_htable_free(move_guard_cashe);
 	free(input_line);
 	return 0;
 }
