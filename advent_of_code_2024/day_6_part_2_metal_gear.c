@@ -122,11 +122,32 @@ int main(void)
 
 	cords ini_guard_pos = guard_pos;
 
+	int prev_guard_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE];
+
+	for(int i = 0; i < INPUT_BUFF_SIZE; ++i){
+		for(int k = 0; k < INPUT_BUFF_SIZE; ++k){
+			prev_guard_pos[i][k] = 0;
+		}
+	}
+
+	//input is square so line count == col length
+	while(guard_pos.col != 0 && guard_pos.col < line_count - 1 && guard_pos.row != 0 && guard_pos.row < line_count - 1){
+		prev_guard_pos[guard_pos.row][guard_pos.col] = 1;
+		guard_pos = move_guard(input, guard_pos);
+	}
+
+	input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
+	input[guard_pos.row][guard_pos.col] = '.';//erase last guard pos
+
 	//set to 1 to count inital pos
 	int block_spots_count = 0;
 	//input is square so line count == col length
 	for(int i = 0; i < line_count; ++i){
 		for(int j = 0; j < line_count; ++j){
+			//limits search to places the guard has been
+			if(prev_guard_pos[i][j] == 0){
+				continue;
+			}
 			//skips positions next to or in guard
 			if(i == ini_guard_pos.row && (j == ini_guard_pos.col || j == ini_guard_pos.col - 1 || j == ini_guard_pos.col + 1)){
 				continue;
