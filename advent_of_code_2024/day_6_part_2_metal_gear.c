@@ -121,6 +121,9 @@ int main(void)
 		guard_pos = move_guard(input, guard_pos);
 	}
 
+	//add in the last guard position
+	prev_guard_pos[guard_pos.row][guard_pos.col] = 1;
+
 	input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
 	input[guard_pos.row][guard_pos.col] = '.';//erase last guard pos
 
