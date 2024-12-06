@@ -37,7 +37,6 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 	switch(input[guard_pos.row][guard_pos.col]){
 		case '^':
 			if(input[guard_pos.row - 1][guard_pos.col] != '.'){
-				input[guard_pos.row][guard_pos.col] = '.';
 				input[guard_pos.row][guard_pos.col] = '>';
 				return guard_pos;
 			}else{
@@ -48,7 +47,6 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 			}
 		case '>':
 			if(input[guard_pos.row][guard_pos.col + 1] != '.'){
-				input[guard_pos.row][guard_pos.col] = '.';
 				input[guard_pos.row][guard_pos.col] = 'v';
 				return guard_pos;
 			}else{
@@ -59,7 +57,6 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 			}
 		case '<':
 			if(input[guard_pos.row][guard_pos.col - 1] != '.'){
-				input[guard_pos.row][guard_pos.col] = '.';
 				input[guard_pos.row][guard_pos.col] = '^';
 				return guard_pos;
 			}else{
@@ -70,7 +67,6 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 			}
 		case 'v':
 			if(input[guard_pos.row + 1][guard_pos.col] != '.'){
-				input[guard_pos.row][guard_pos.col] = '.';
 				input[guard_pos.row][guard_pos.col] = '<';
 				return guard_pos;
 			}else{
