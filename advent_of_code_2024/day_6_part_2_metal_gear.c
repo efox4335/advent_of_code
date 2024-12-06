@@ -81,17 +81,6 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 	return bad_val;
 }
 
-void clear_prev_pos (char prev_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE][128])
-{
-	for(int i = 0; i < INPUT_BUFF_SIZE; ++i){
-		for(int k = 0; k < INPUT_BUFF_SIZE; ++k){
-			for(int j = 0; j < 128; ++j){
-				prev_pos[i][k][j] = 0;
-			}
-		}
-	}
-}
-
 int main(void)
 {
 	enum{FOUND, NOT_FOUND};
