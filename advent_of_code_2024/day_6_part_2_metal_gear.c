@@ -127,8 +127,8 @@ int main(void)
 	input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
 	input[guard_pos.row][guard_pos.col] = '.';//erase last guard pos
 
-	edsa_htable *move_guard_cashe = NULL;
-	edsa_htable_init(&move_guard_cashe, sizeof(cords), sizeof(cords), 100);
+	edsa_htable *move_guard_opt_cashe = NULL;
+	edsa_htable_init(&move_guard_opt_cashe, sizeof(guard_state), sizeof(guard_state), 100);
 
 	//set to 1 to count inital pos
 	int block_spots_count = 0;
@@ -140,10 +140,7 @@ int main(void)
 				continue;
 			}
 			//skips positions next to or in guard
-			if(i == ini_guard_pos.row && (j == ini_guard_pos.col || j == ini_guard_pos.col - 1 || j == ini_guard_pos.col + 1)){
-				continue;
-			}
-			if(j == ini_guard_pos.col && (i == ini_guard_pos.row || i == ini_guard_pos.row + 1 || i == ini_guard_pos.row - 1)){
+			if(i == ini_guard_pos.row && j == ini_guard_pos.col){
 				continue;
 			}
 			if(input[i][j] == '.'){//to not erase already existing '#'
@@ -167,14 +164,20 @@ int main(void)
 				if(guard_pos.row == i || guard_pos.col == j){
 					guard_pos = move_guard(input, guard_pos);
 				}else{
-					cords temp = guard_pos;
+					guard_state out_state;
+					guard_state in_state;
+					in_state.guard_pos = guard_pos;
+					in_state.dir = input[guard_pos.row][guard_pos.col];
 					//if guard pos has already been called with the same arguments
-					if(edsa_htable_read(move_guard_cashe, &guard_pos, &temp) == EDSA_SUCCESS){
-						guard_pos = temp;
+					if(edsa_htable_read(move_guard_opt_cashe, &in_state, &out_state) == EDSA_SUCCESS){
+						input[guard_pos.row][guard_pos.col] = '.';
+						guard_pos = out_state.guard_pos;
+						input[guard_pos.row][guard_pos.col] = out_state.dir;
 					}else{
-						temp = move_guard(input, guard_pos);
-						edsa_htable_ins(move_guard_cashe, &move_guard, &temp);
-						guard_pos = temp;
+						out_state.guard_pos = move_guard(input, guard_pos);
+						out_state.dir = input[out_state.guard_pos.row][out_state.guard_pos.col];
+						edsa_htable_ins(move_guard_opt_cashe, &in_state, &out_state);
+						guard_pos = out_state.guard_pos;
 					}
 				}
 
@@ -198,7 +201,7 @@ int main(void)
 
 	printf("%d\n", block_spots_count);
 
-	edsa_htable_free(move_guard_cashe);
+	edsa_htable_free(move_guard_opt_cashe);
 	free(input_line);
 	return 0;
 }
