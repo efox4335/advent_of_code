@@ -81,6 +81,67 @@ cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
 	return bad_val;
 }
 
+cords move_guard_opt(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos, int line_count)
+{
+	switch(input[guard_pos.row][guard_pos.col]){
+		case '^':
+			if(input[guard_pos.row - 1][guard_pos.col] != '.'){
+				input[guard_pos.row][guard_pos.col] = '>';
+				return guard_pos;
+			}else{
+				cords temp_pos = guard_pos;
+				while(temp_pos.row > 0 && input[temp_pos.row - 1][temp_pos.col] == '.'){
+					temp_pos.row -= 1;
+				}
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[temp_pos.row][temp_pos.col] = '^';
+				return temp_pos;
+			}
+		case '>':
+			if(input[guard_pos.row][guard_pos.col + 1] != '.'){
+				input[guard_pos.row][guard_pos.col] = 'v';
+				return guard_pos;
+			}else{
+				cords temp_pos = guard_pos;
+				while(temp_pos.col < line_count && input[temp_pos.row][temp_pos.col + 1] == '.'){
+					temp_pos.col += 1;
+				}
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[temp_pos.row][temp_pos.col] = '>';
+				return temp_pos;
+			}
+		case '<':
+			if(input[guard_pos.row][guard_pos.col - 1] != '.'){
+				input[guard_pos.row][guard_pos.col] = '^';
+				return guard_pos;
+			}else{
+				cords temp_pos = guard_pos;
+				while(temp_pos.col > 0 && input[temp_pos.row][temp_pos.col - 1] == '.'){
+					temp_pos.col -= 1;
+				}
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[temp_pos.row][temp_pos.col] = '<';
+				return temp_pos;
+			}
+		case 'v':
+			if(input[guard_pos.row + 1][guard_pos.col] != '.'){
+				input[guard_pos.row][guard_pos.col] = '<';
+				return guard_pos;
+			}else{
+				cords temp_pos = guard_pos;
+				while(temp_pos.row < line_count && input[temp_pos.row + 1][temp_pos.col] == '.'){
+					temp_pos.row += 1;
+				}
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[temp_pos.row][temp_pos.col] = 'v';
+				return temp_pos;
+			}
+	}
+
+	cords bad_val = {-1, -1};
+	return bad_val;
+}
+
 int main(void)
 {
 	enum{FOUND, NOT_FOUND};
@@ -174,7 +235,7 @@ int main(void)
 						guard_pos = out_state.guard_pos;
 						input[guard_pos.row][guard_pos.col] = out_state.dir;
 					}else{
-						out_state.guard_pos = move_guard(input, guard_pos);
+						out_state.guard_pos = move_guard_opt(input, guard_pos, line_count);
 						out_state.dir = input[out_state.guard_pos.row][out_state.guard_pos.col];
 						edsa_htable_ins(move_guard_opt_cashe, &in_state, &out_state);
 						guard_pos = out_state.guard_pos;
