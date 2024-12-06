@@ -187,8 +187,9 @@ int main(void)
 				}
 			}
 
-			input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
 			input[guard_pos.row][guard_pos.col] = '.';//erase last guard pos
+			input[ini_guard_pos.row][ini_guard_pos.col] = '^';//reset guard pos
+
 			input[i][j] = '.';
 
 			edsa_htable_free(pos_hash);
