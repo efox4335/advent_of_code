@@ -1,5 +1,6 @@
 /*
  * just simulate the guard till it goes off screen while counting the positions
+ * store all guard positions in an array to avoid double counting
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +23,63 @@ int find_guard(char *line)
 	}
 
 	return -1;
+}
+
+cords move_guard(char input[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE], cords guard_pos)
+{
+	switch(input[guard_pos.row][guard_pos.col]){
+		case '^':
+			if(input[guard_pos.row - 1][guard_pos.col] != '.'){
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row][guard_pos.col + 1] = '>';
+				guard_pos.col += 1;
+				return guard_pos;
+			}else{
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row - 1][guard_pos.col] = '^';
+				guard_pos.row -= 1;
+				return guard_pos;
+			}
+		case '>':
+			if(input[guard_pos.row][guard_pos.col + 1] != '.'){
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row + 1][guard_pos.col] = 'v';
+				guard_pos.row += 1;
+				return guard_pos;
+			}else{
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row][guard_pos.col + 1] = '>';
+				guard_pos.col += 1;
+				return guard_pos;
+			}
+		case '<':
+			if(input[guard_pos.row][guard_pos.col - 1] != '.'){
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row - 1][guard_pos.col] = '^';
+				guard_pos.row -= 1;
+				return guard_pos;
+			}else{
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row][guard_pos.col - 1] = '<';
+				guard_pos.col -= 1;
+				return guard_pos;
+			}
+		case 'v':
+			if(input[guard_pos.row + 1][guard_pos.col] != '.'){
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row][guard_pos.col - 1] = '<';
+				guard_pos.col -= 1;
+				return guard_pos;
+			}else{
+				input[guard_pos.row][guard_pos.col] = '.';
+				input[guard_pos.row + 1][guard_pos.col] = 'v';
+				guard_pos.row += 1;
+				return guard_pos;
+			}
+	}
+
+	cords bad_val = {-1, -1};
+	return bad_val;
 }
 
 int main(void)
@@ -47,6 +105,28 @@ int main(void)
 		}
 		++line_count;
 	}
+
+	int prev_guard_pos[INPUT_BUFF_SIZE][INPUT_BUFF_SIZE];
+
+	for(int i = 0; i < INPUT_BUFF_SIZE; ++i){
+		for(int k = 0; k < INPUT_BUFF_SIZE; ++k){
+			prev_guard_pos[i][k] = 0;
+		}
+	}
+
+	//set to 1 to count inital pos
+	int path_len = 1;
+	//input is square so line count == col length
+	while(guard_pos.col != 0 && guard_pos.col < line_count - 1 && guard_pos.row != 0 && guard_pos.row < line_count - 1){
+		prev_guard_pos[guard_pos.row][guard_pos.col] = 1;
+		guard_pos = move_guard(input, guard_pos);
+
+		if(prev_guard_pos[guard_pos.row][guard_pos.col] != 1){
+			++path_len;
+		}
+	}
+
+	printf("%d\n", path_len);
 
 	free(input_line);
 	return 0;
