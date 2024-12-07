@@ -11,13 +11,13 @@
 
 int base_10_digits(size_t num)
 {
-	int digit_count = 0;
-	while(num > 0){
-		num /= 10;
-		++digit_count;
+	if(num < 10){
+		return 1;
+	}else if(num < 100){
+		return 2;
+	}else{
+		return 3;
 	}
-
-	return digit_count;
 }
 
 //returns 1 if the total is possible from num_arr
