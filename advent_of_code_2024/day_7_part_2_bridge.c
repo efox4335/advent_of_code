@@ -9,6 +9,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+int base_10_digits(size_t num)
+{
+	int digit_count = 0;
+	while(num > 0){
+		num /= 10;
+		++digit_count;
+	}
+
+	return digit_count;
+}
+
 //returns 1 if the total is possible from num_arr
 //when any number that could be a factor also check if it could be added to get the total
 int is_possible(size_t total, size_t *num_arr, int num_count)
@@ -16,6 +27,16 @@ int is_possible(size_t total, size_t *num_arr, int num_count)
 	long long int temp_total = total;
 
 	for(int i = num_count - 1; i >= 1; --i){
+		int digit_count = base_10_digits(num_arr[i]);
+		size_t div_amount = 1;
+		for(int i = 0; i < digit_count; ++i){
+			div_amount *= 10;
+		}
+		if(temp_total % div_amount == num_arr[i]){
+			if(is_possible((temp_total - num_arr[i]) / div_amount, num_arr, i)){
+				return 1;
+			}
+		}
 		if(temp_total <= 0){
 			break;
 		}else if((temp_total % num_arr[i]) == 0ll){
