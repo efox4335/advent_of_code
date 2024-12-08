@@ -3,6 +3,7 @@
  * i think if 2 antinodes overlap than it counts as 1 antinode
  * store antinodes in 2d array with index being there position to not double count antinodes
  * calculate 100 in each direction and mark them
+ * also draw each antenna as an antinode
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,16 +13,32 @@ typedef struct{
 	int col;
 }cords;
 
-void calc_antinode_pos(cords antenna_1, cords antenna_2, cords antinodes[2])
+void calc_antinode_pos(cords antenna_1, cords antenna_2, cords antinodes[200])
 {
 	int row_dif = antenna_1.row - antenna_2.row;
 	int col_dif = antenna_1.col - antenna_2.col;
 
-	antinodes[0].row = antenna_1.row + row_dif;
-	antinodes[0].col = antenna_1.col + col_dif;
+	antinodes[99].row = antenna_1.row + row_dif;
+	antinodes[99].col = antenna_1.col + col_dif;
 
-	antinodes[1].row = antenna_2.row - row_dif;
-	antinodes[1].col = antenna_2.col - col_dif;
+	antinodes[98].row = antinodes[99].row + row_dif;
+	antinodes[98].col = antinodes[99].col + col_dif;
+
+	for(int i = 97; i >= 0; --i){
+		antinodes[i].row = antinodes[i + 1].row + row_dif;
+		antinodes[i].col = antinodes[i + 1].col + col_dif;
+	}
+
+	antinodes[100].row = antenna_2.row - row_dif;
+	antinodes[100].col = antenna_2.col - col_dif;
+
+	antinodes[101].row = antinodes[100].row - row_dif;
+	antinodes[101].col = antinodes[100].col - col_dif;
+
+	for(int i = 102; i < 200; ++i){
+		antinodes[i].row = antinodes[i - 1].row - row_dif;
+		antinodes[i].col = antinodes[i - 1].col - col_dif;
+	}
 }
 
 //draws antinode if it is within the range
@@ -75,12 +92,16 @@ int main(void)
 
 		for(int k = 0; k < antenna_type_count[i]; ++k){
 			for(int j = k + 1; j < antenna_type_count[i]; ++j){
-				cords temp_antinodes[2];
+				cords temp_antinodes[200];
 
 				calc_antinode_pos(antenna_pos_arr[i][k], antenna_pos_arr[i][j], temp_antinodes);
 
-				draw_antinode(antinode_pos, temp_antinodes[0], line_count);
-				draw_antinode(antinode_pos, temp_antinodes[1], line_count);
+				draw_antinode(antinode_pos, antenna_pos_arr[i][k], line_count);
+				draw_antinode(antinode_pos, antenna_pos_arr[i][j], line_count);
+
+				for(int l = 0; l < 200; ++l){
+					draw_antinode(antinode_pos, temp_antinodes[l], line_count);
+				}
 			}
 		}
 	}
