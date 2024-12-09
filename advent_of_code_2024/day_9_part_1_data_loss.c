@@ -10,6 +10,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int final_id(int block_count)
+{
+	block_count = (!(block_count & 1))? block_count - 1: block_count;//block_count works for odd numbers if even convert to odd
+	return block_count / 2;
+}
+
 int main(void)
 {
 	int block_arr[20000];
