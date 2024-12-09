@@ -12,10 +12,18 @@
 
 int main(void)
 {
+	int block_arr[20000];
+	int block_count = 0;
+
 	char *input_line = NULL;
 	size_t lim = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
+	}
+
+	for(int i = 0; input_line[i] != '\n'; ++i){
+		block_arr[i] = input_line[i] - '0';
+		++block_count;
 	}
 
 	free(input_line);
