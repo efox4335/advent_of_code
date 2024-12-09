@@ -32,6 +32,52 @@ int main(void)
 		++block_count;
 	}
 
+	size_t cur_fs_pos = 0;
+	size_t st_index = 0;
+	size_t end_index = (block_count & 1)? block_count - 1: block_count - 2;//skips last empty block if there is one
+	size_t st_id = 0;
+	size_t end_id = final_id(block_count);
+	size_t checksum = 0;
+
+	while(st_index <= end_index){
+		if(st_index & 1){
+			if(block_arr[end_index] == 0){
+				end_index -= 2;
+				--end_id;
+				if(st_index >= end_index){//if st_index is at the last empty block and the last file block is empty to avoid counting anything twice
+					break;
+				}
+			}
+
+			while(block_arr[st_index] > 0){
+				if(block_arr[end_index] == 0){
+					end_index -= 2;
+					--end_id;
+					if(st_index >= end_index){//if st_index is at the last empty block and the last file block is empty to avoid counting anything twice
+						break;
+					}
+				}
+
+				block_arr[end_index] -= 1;
+				block_arr[st_index] -= 1;
+				checksum += end_id * cur_fs_pos;
+				++cur_fs_pos;
+			}
+
+		}else{
+			for(int i = 0; i < block_arr[st_index]; ++i){
+				checksum += st_id * cur_fs_pos;
+				++cur_fs_pos;
+			}
+
+			++st_id;
+		}
+
+		++st_index;
+	}
+
+	printf("%lu\n", checksum);
+
 	free(input_line);
 	return 0;
 }
