@@ -6,6 +6,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+int base_10_digit_count(long input)
+{
+	int digit_count = 1;
+	int power_of_10s = 10;
+	while(input >= power_of_10s){
+		power_of_10s *= 10;
+		++digit_count;
+	}
+
+	return digit_count;
+}
+
 int main(void)
 {
 	char *input_line = NULL;
