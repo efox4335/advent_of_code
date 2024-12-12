@@ -130,8 +130,6 @@ fn main() {
             if input[line][plant].is_visited == false{
                 let shape_data = get_shape_data(Cord{row: line, col: plant}, &mut input, bound);
 
-                println!("{} {}", shape_data.area, shape_data.perimeter);
-
                 total += shape_data.area * shape_data.perimeter;
             }
 
