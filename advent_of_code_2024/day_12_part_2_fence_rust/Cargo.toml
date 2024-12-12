@@ -1,0 +1,6 @@
+[package]
+name = "day_12_part_2_fence_rust"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
