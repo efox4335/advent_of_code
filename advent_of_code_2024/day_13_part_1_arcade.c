@@ -75,6 +75,11 @@ int main(void)
 			part = EQU_1;
 			break;
 		}
+
+		if(part == EQU_1){
+			cur_equ.k1 = 0;
+			cur_equ.k2 = (prize_pos.x * cur_equ.dy2) - (prize_pos.y * cur_equ.dx2);
+		}
 	}
 
 	free(input_line);
