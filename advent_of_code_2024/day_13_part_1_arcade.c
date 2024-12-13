@@ -89,7 +89,7 @@ int main(void)
 			press_count cur_button = gaussian(cur_equ);
 
 			if(cur_button.a_count > 0 && cur_button.b_count > 0 && fabs(cur_button.a_count - round(cur_button.a_count)) < 0.01 && fabs(cur_button.b_count - round(cur_button.b_count)) < 0.01){
-				token_count += 3 * cur_button.a_count + cur_button.b_count;
+				token_count += 3 * round(cur_button.a_count) + round(cur_button.b_count);
 			}
 		}
 	}
