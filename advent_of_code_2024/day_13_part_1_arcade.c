@@ -26,6 +26,17 @@ typedef struct{
 	double y;
 }cord;
 
+//returns intersection point of these 2 equations
+cord gaussian(const equation cur_equ)
+{
+	const double row_dif = (cur_equ.dy2 / cur_equ.dy1);
+	cord intersect_point;
+	intersect_point.y = cur_equ.k2 / ((-1 * cur_equ.dx2) - ((-1 * cur_equ.dx1) * row_dif));
+	intersect_point.x = (cur_equ.dx1 * intersect_point.y) / cur_equ.dy1;//(dx1intersect_point.y)/dy1 = x_intersect
+
+	return intersect_point;
+}
+
 int main(void)
 {
 	char *input_line = NULL;
@@ -79,6 +90,8 @@ int main(void)
 		if(part == EQU_1){
 			cur_equ.k1 = 0;
 			cur_equ.k2 = (prize_pos.x * cur_equ.dy2) - (prize_pos.y * cur_equ.dx2);
+
+			cord inter_point = gaussian(cur_equ);
 		}
 	}
 
