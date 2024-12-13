@@ -92,6 +92,14 @@ int main(void)
 			cur_equ.k2 = (prize_pos.x * cur_equ.dy2) - (prize_pos.y * cur_equ.dx2);
 
 			cord inter_point = gaussian(cur_equ);
+
+			//interscetion point makes it impossaible to get the prize
+			if(inter_point.x > prize_pos.x || inter_point.x < 0 || inter_point.y > prize_pos.y || inter_point.y < 0){
+				continue;
+			}
+
+			long a_press_count = inter_point.x / cur_equ.dx1;
+			long b_press_count = (prize_pos.x - inter_point.x) / cur_equ.dx2;
 		}
 	}
 
