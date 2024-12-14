@@ -7,5 +7,8 @@ edition = "2021"
 name = "day_13_part_1_bus"
 path = "day_13_part_1_bus.rs"
 
+[[bin]]
+name = "day_13_part_2_bus"
+path = "day_13_part_2_bus.rs"
 
 [dependencies]
