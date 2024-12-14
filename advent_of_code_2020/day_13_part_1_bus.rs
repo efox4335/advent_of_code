@@ -13,7 +13,7 @@ fn main() {
 
     let bus_id: Vec<u32> = line
         .split([',', 'x', '\n'])
-        .filter(|&id| !id.to_string().is_empty())
+        .filter(|&id| !id.is_empty())
         .map(|id| id.parse().unwrap())
         .collect();
 }
