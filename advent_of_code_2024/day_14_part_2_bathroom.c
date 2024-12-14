@@ -1,12 +1,11 @@
 /*
- * look for robots in a row
+ * flood fill all robot positions till a high number of robots are in an area
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stddef.h>
 
-enum{ROOM_COL_COUNT = 101L, ROOM_ROW_COUNT = 103L, SEC_COUNT = 100L};
+enum{ROOM_COL_COUNT = 101L, ROOM_ROW_COUNT = 103L};
 
 typedef struct{
 	long row;
@@ -14,15 +13,15 @@ typedef struct{
 }cord;
 
 typedef struct{
-	cord st_point;
+	cord cur_pos;
 	cord vel;
 }robot;
 
 //returns the robots pos after one second
-cord sim_sec(const cord cur_pos, const robot cur_rb)
+cord sim_sec(const robot cur_rb)
 {
 	cord ret_pos;
-	ret_pos.row = cur_rb.vel.row + cur_pos.row;
+	ret_pos.row = cur_rb.vel.row + cur_rb.cur_pos.row;
 
 	if(ret_pos.row >= ROOM_ROW_COUNT){
 		ret_pos.row %= ROOM_ROW_COUNT;
@@ -30,7 +29,7 @@ cord sim_sec(const cord cur_pos, const robot cur_rb)
 		ret_pos.row += ROOM_ROW_COUNT;
 	}
 
-	ret_pos.col = cur_rb.vel.col + cur_pos.col;
+	ret_pos.col = cur_rb.vel.col + cur_rb.cur_pos.col;
 
 	if(ret_pos.col >= ROOM_COL_COUNT){
 		ret_pos.col %= ROOM_COL_COUNT;
@@ -52,12 +51,20 @@ int main(void)
 	robot rb_arr[1000];
 	int rb_count = 0;
 
+	int room_arr[200][200];
+
+	for(int i = 0; i < 200; ++i){
+		for(int j = 0; j < 200; ++j){
+			room_arr[i][j] = 0;
+		}
+	}
+
 	while(getline(&input_line, &lim, stdin) > 1){
 		int_ptr = strtok(input_line, delim);
-		rb_arr[rb_count].st_point.col = atol(int_ptr);
+		rb_arr[rb_count].cur_pos.col = atol(int_ptr);
 
 		int_ptr = strtok(NULL, delim);
-		rb_arr[rb_count].st_point.row = atol(int_ptr);
+		rb_arr[rb_count].cur_pos.row = atol(int_ptr);
 
 		int_ptr = strtok(NULL, delim);
 		rb_arr[rb_count].vel.col = atol(int_ptr);
@@ -65,7 +72,20 @@ int main(void)
 		int_ptr = strtok(NULL, delim);
 		rb_arr[rb_count].vel.row = atol(int_ptr);
 
+		room_arr[rb_arr[rb_count].cur_pos.row][rb_arr[rb_count].cur_pos.col] += 1;
+
 		++rb_count;
+	}
+
+	while(1){
+		for(int j = 0; j < rb_count; ++j){
+			const cord next_pos = sim_sec(rb_arr[j]);
+
+			room_arr[rb_arr[j].cur_pos.row][rb_arr[j].cur_pos.col] -= 1;
+			room_arr[next_pos.row][next_pos.col] += 1;
+
+			rb_arr[j].cur_pos = next_pos;
+		}
 	}
 
 	free(input_line);
