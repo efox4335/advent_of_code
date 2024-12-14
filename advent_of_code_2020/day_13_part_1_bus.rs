@@ -18,11 +18,11 @@ fn main() {
 
     let mut soonest_bus_id = u32::MAX;
     let mut wait = u32::MAX;
-    for id in bus_id{
+    for id in bus_id {
         let id_mod = ear_leave % id;
         let cur_wait = id - id_mod;
 
-        if cur_wait < wait{
+        if cur_wait < wait {
             soonest_bus_id = id;
             wait = cur_wait;
         }
