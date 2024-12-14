@@ -97,7 +97,7 @@ int main(void)
 
 		++sec_count;
 
-		if(right_nab_count > 50){
+		if(right_nab_count > 90){
 			break;
 		}
 	}
