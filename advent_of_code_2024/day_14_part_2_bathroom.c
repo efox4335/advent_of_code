@@ -1,5 +1,5 @@
 /*
- * flood fill all robot positions till a high number of robots are in an area
+ * check if each robot has a right neighbor when this number is very high there is likely not a random distribution of robots
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,64 +16,6 @@ typedef struct{
 	cord cur_pos;
 	cord vel;
 }robot;
-
-//returns the number of robots connected to st_rb
-int flood_count(const cord st_rb, const int rb_pos_arr[200][200])
-{
-	int seen_arr[200][200];
-
-	for(int i = 0; i < 200; ++i){
-		for(int j = 0; j < 200; ++j){
-			seen_arr[i][j] = 0;
-		}
-	}
-
-	cord visit_stack[1000];
-	int st_count = 0;
-	int rb_count = 0;
-
-	seen_arr[st_rb.row][st_rb.col] = 1;
-	visit_stack[st_count] = st_rb;
-	++st_count;
-
-	while(st_count > 0){
-		cord cur_rb = visit_stack[st_count - 1];
-
-		//upper
-		if(cur_rb.row > 0 && rb_pos_arr[cur_rb.row - 1][cur_rb.col] > 0 && seen_arr[cur_rb.row - 1][cur_rb.col] == 0){
-			visit_stack[st_count].row = cur_rb.row - 1;
-			visit_stack[st_count].col = cur_rb.col;
-			seen_arr[cur_rb.row - 1][cur_rb.col] = 1;
-			++st_count;
-		}
-		//down
-		if(cur_rb.row < ROOM_ROW_COUNT && rb_pos_arr[cur_rb.row + 1][cur_rb.col] > 0 && seen_arr[cur_rb.row + 1][cur_rb.col] == 0){
-			visit_stack[st_count].row = cur_rb.row + 1;
-			visit_stack[st_count].col = cur_rb.col;
-			seen_arr[cur_rb.row + 1][cur_rb.col] = 1;
-			++st_count;
-		}
-		//left
-		if(cur_rb.col > 0 && rb_pos_arr[cur_rb.row][cur_rb.col - 1] > 0 && seen_arr[cur_rb.row][cur_rb.col - 1] == 0){
-			visit_stack[st_count].row = cur_rb.row;
-			visit_stack[st_count].col = cur_rb.col - 1;
-			seen_arr[cur_rb.row][cur_rb.col - 1] = 1;
-			++st_count;
-		}
-		//right
-		if(cur_rb.col < ROOM_COL_COUNT && rb_pos_arr[cur_rb.row][cur_rb.col + 1] > 0 && seen_arr[cur_rb.row][cur_rb.col + 1] == 0){
-			visit_stack[st_count].row = cur_rb.row;
-			visit_stack[st_count].col = cur_rb.col + 1;
-			seen_arr[cur_rb.row][cur_rb.col + 1] = 1;
-			++st_count;
-		}
-
-		--st_count;
-		++rb_count;
-	}
-
-	return rb_count;
-}
 
 //returns the robots pos after one second
 cord sim_sec(const robot cur_rb)
@@ -136,9 +78,10 @@ int main(void)
 	}
 
 	int sec_count = 0;
-	int max_seen = 0;
 
 	while(1){
+		int right_nab_count = 0;
+
 		for(int j = 0; j < rb_count; ++j){
 			const cord next_pos = sim_sec(rb_arr[j]);
 
@@ -146,18 +89,15 @@ int main(void)
 			room_arr[next_pos.row][next_pos.col] += 1;
 
 			rb_arr[j].cur_pos = next_pos;
-		}
 
-		max_seen = 0;
-
-		for(int j = 0; j < rb_count; ++j){
-			int cur_seen = flood_count(rb_arr[j].cur_pos, room_arr);
-			max_seen = (cur_seen > max_seen)? cur_seen : max_seen;
+			if(room_arr[next_pos.row][next_pos.col + 1] > 0){
+				++right_nab_count;
+			}
 		}
 
 		++sec_count;
 
-		if(max_seen >= 20){
+		if(right_nab_count > 50){
 			break;
 		}
 	}
