@@ -5,12 +5,12 @@
  * 	if there is a '.' the move can happen
  * if the check passes for all boxes the move can happen
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 
 enum{BUF_SIZE = 200};
 enum{UP, DOWN, LEFT, RIGHT};
+enum{BOX, WALL, EMPTY};
 
 typedef struct{
 	int row;
@@ -20,6 +20,11 @@ typedef struct{
 //moves box at box_pos dir without checking for collisions
 void move_box(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir)
 {
+	if(warehouse[box_pos.row][box_pos.col] != '[' && warehouse[box_pos.row][box_pos.col] != ']'){
+		printf("error tried to move non box at %d %d\n", box_pos.row, box_pos.col);
+		exit(1);
+	}
+
 	switch(dir){
 	case UP:
 		if(warehouse[box_pos.row][box_pos.col] == '['){
@@ -70,6 +75,129 @@ void move_box(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir)
 		}
 		break;
 	}
+}
+
+/*
+ * returns EMPTY if there is nothing blocking the box from moving
+ * returns BOX if there is a box where it wants to move puts the cords of the box(s) in child_box_pos
+ * returns WALL if there is a wall blocking the way
+ * -1 is the sentinal value if there is only one child box
+*/
+int can_move(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir, cord child_box_pos[3])
+{
+	if(warehouse[box_pos.row][box_pos.col] != '[' && warehouse[box_pos.row][box_pos.col] != ']'){
+		printf("error tried to check non box at %d %d\n", box_pos.row, box_pos.col);
+		exit(1);
+	}
+
+	cord check_cords[2];
+
+	switch(dir){
+	case UP:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			check_cords[0].row = box_pos.row - 1;
+			check_cords[0].col = box_pos.col;
+			check_cords[1].row = box_pos.row - 1;
+			check_cords[1].col = box_pos.col + 1;
+		}else{
+			check_cords[0].row = box_pos.row - 1;
+			check_cords[0].col = box_pos.col;
+			check_cords[1].row = box_pos.row - 1;
+			check_cords[1].col = box_pos.col - 1;
+		}
+		break;
+	case DOWN:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			check_cords[0].row = box_pos.row + 1;
+			check_cords[0].col = box_pos.col;
+			check_cords[1].row = box_pos.row + 1;
+			check_cords[1].col = box_pos.col + 1;
+		}else{
+			check_cords[0].row = box_pos.row + 1;
+			check_cords[0].col = box_pos.col;
+			check_cords[1].row = box_pos.row + 1;
+			check_cords[1].col = box_pos.col - 1;
+		}
+		break;
+	case LEFT:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			check_cords[0].row = box_pos.row;
+			check_cords[0].col = box_pos.col - 1;
+			check_cords[1].row = -1;
+			check_cords[1].col = -1;
+		}else{
+			check_cords[0].row = box_pos.row;
+			check_cords[0].col = box_pos.col - 2;
+			check_cords[1].row = -1;
+			check_cords[1].col = -1;
+		}
+		break;
+	case RIGHT:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			check_cords[0].row = box_pos.row;
+			check_cords[0].col = box_pos.col + 2;
+			check_cords[1].row = -1;
+			check_cords[1].col = -1;
+		}else{
+			check_cords[0].row = box_pos.row;
+			check_cords[0].col = box_pos.col + 1;
+			check_cords[1].row = -1;
+			check_cords[1].col = -1;
+		}
+		break;
+	}
+
+	int child_box_count = 0;
+	int ret_val = EMPTY;
+
+	for(int i = 0; i < 2 && check_cords[i].row != -1; ++i){
+		switch(warehouse[check_cords[i].row][check_cords[i].col]){
+		case '#':
+			return WALL;
+		case '[':
+			/*
+			 * keeps from double counting case
+			 * 	[]
+			 * 	[]
+			 * because case
+			 * 	[[
+			 * 	[]
+			 * can't happen the only way for the check to pass is with the above case
+			*/
+			if(i != 0 && check_cords[0].col > check_cords[i].col){
+				break;
+			}
+			child_box_pos[child_box_count] = check_cords[i];
+			++child_box_count;
+			child_box_pos[child_box_count].row = -1;
+			child_box_pos[child_box_count].col = -1;
+			ret_val = BOX;
+			break;
+		case ']':
+			/*
+			 * keeps from double counting case
+			 * 	[]
+			 * 	[]
+			 * because case
+			 * 	]]
+			 * 	[]
+			 * can't happen the only way for the check to pass is with the above case
+			*/
+			if(i != 0 && check_cords[0].col < check_cords[i].col){
+				break;
+			}
+			child_box_pos[child_box_count] = check_cords[i];
+			++child_box_count;
+			child_box_pos[child_box_count].row = -1;
+			child_box_pos[child_box_count].col = -1;
+			ret_val = BOX;
+			break;
+		case '.':
+		default:
+		}
+	}
+
+	return ret_val;
 }
 
 /*
