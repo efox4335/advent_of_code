@@ -74,7 +74,8 @@ int main(void)
 	int move_arr[70000];
 	int move_arr_len = 0;
 	int parse_part = WAREHOUSE;
-	int warehouse_size = 0;
+	int warehouse_row_count = 0;
+	int warehouse_col_count = 0;
 	cord robot_pos;
 
 	while(getline(&input_line, &lim, stdin) > 0){
@@ -84,15 +85,43 @@ int main(void)
 		}
 
 		if(parse_part == WAREHOUSE){
+			warehouse_col_count = 0;
+
 			for(int i = 0; input_line[i] != '\n'; ++i){
 				if(input_line[i] == '@'){
-					robot_pos.row = warehouse_size;
-					robot_pos.col = i;
+					robot_pos.row = warehouse_row_count;
+					robot_pos.col = warehouse_col_count;
 				}
-				warehouse[warehouse_size][i] = input_line[i];
+
+				switch(input_line[i]){
+				case '.':
+					warehouse[warehouse_row_count][warehouse_col_count] = '.';
+					warehouse[warehouse_row_count][warehouse_col_count + 1] = '.';
+
+					warehouse_col_count += 2;
+					break;
+				case '#':
+					warehouse[warehouse_row_count][warehouse_col_count] = '#';
+					warehouse[warehouse_row_count][warehouse_col_count + 1] = '#';
+
+					warehouse_col_count += 2;
+					break;
+				case '@':
+					warehouse[warehouse_row_count][warehouse_col_count] = '@';
+					warehouse[warehouse_row_count][warehouse_col_count + 1] = '.';
+
+					warehouse_col_count += 2;
+					break;
+				case 'O':
+					warehouse[warehouse_row_count][warehouse_col_count] = '[';
+					warehouse[warehouse_row_count][warehouse_col_count + 1] = ']';
+
+					warehouse_col_count += 2;
+					break;
+				}
 			}
 
-			++warehouse_size;
+			++warehouse_row_count;
 		}else{
 			for(int i = 0; input_line[i] != '\n'; ++i){
 				switch(input_line[i]){
@@ -119,22 +148,6 @@ int main(void)
 			}
 		}
 	}
-
-	for(int i = 0; i < move_arr_len; ++i){
-		sim_move(warehouse, &robot_pos, move_arr[i]);
-	}
-
-	int gps_cord_sum = 0;
-
-	for(int i = 0; i < warehouse_size; ++i){
-		for(int j = 0; j < warehouse_size; ++j){
-			if(warehouse[i][j] == 'O'){
-				gps_cord_sum += (100 * i) + j;
-			}
-		}
-	}
-
-	printf("%d\n", gps_cord_sum);
 
 	free(input_line);
 	return 0;
