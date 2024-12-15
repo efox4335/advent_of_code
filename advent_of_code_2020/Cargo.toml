@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "day_1_part_1_accounting"
-path = "day_1_part_1_accounting"
+path = "day_1_part_1_accounting.rs"
 
 [[bin]]
 name = "day_13_part_1_bus"
