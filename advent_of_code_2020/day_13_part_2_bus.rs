@@ -31,16 +31,16 @@ fn main() {
     }
 
     let mut prod = 1;
-    for i in bus_vec.iter(){
+    for i in bus_vec.iter() {
         prod *= i.id;
     }
 
     let mut time: u128 = 0;
-    for id in bus_vec.iter(){
+    for id in bus_vec.iter() {
         let base_val = prod / id.id;
         let mut add_val = base_val;
 
-        while add_val % id.id != id.arival_time{
+        while add_val % id.id != id.arival_time {
             add_val %= prod;
             add_val += base_val;
         }
