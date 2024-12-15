@@ -17,6 +17,61 @@ typedef struct{
 	int col;
 }cord;
 
+//moves box at box_pos dir without checking for collisions
+void move_box(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir)
+{
+	switch(dir){
+	case UP:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col + 1] = '.';
+			warehouse[box_pos.row - 1][box_pos.col] = '[';
+			warehouse[box_pos.row - 1][box_pos.col + 1] = ']';
+		}else{
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col - 1] = '.';
+			warehouse[box_pos.row - 1][box_pos.col - 1] = '[';
+			warehouse[box_pos.row - 1][box_pos.col] = ']';
+		}
+		break;
+	case DOWN:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col + 1] = '.';
+			warehouse[box_pos.row + 1][box_pos.col] = '[';
+			warehouse[box_pos.row + 1][box_pos.col + 1] = ']';
+		}else{
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col - 1] = '.';
+			warehouse[box_pos.row + 1][box_pos.col - 1] = '[';
+			warehouse[box_pos.row + 1][box_pos.col] = ']';
+		}
+		break;
+	case LEFT:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			warehouse[box_pos.row][box_pos.col] = ']';
+			warehouse[box_pos.row][box_pos.col + 1] = '.';
+			warehouse[box_pos.row][box_pos.col - 1] = '[';
+		}else{
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col - 1] = ']';
+			warehouse[box_pos.row][box_pos.col - 2] = '[';
+		}
+		break;
+	case RIGHT:
+		if(warehouse[box_pos.row][box_pos.col] == '['){
+			warehouse[box_pos.row][box_pos.col] = '.';
+			warehouse[box_pos.row][box_pos.col + 1] = '[';
+			warehouse[box_pos.row][box_pos.col + 2] = ']';
+		}else{
+			warehouse[box_pos.row][box_pos.col] = '[';
+			warehouse[box_pos.row][box_pos.col - 1] = '.';
+			warehouse[box_pos.row][box_pos.col + 1] = ']';
+		}
+		break;
+	}
+}
+
 /*
  * simulates moving boxes and the robot
  * goes in dir marking everything as '.' keeping track of how many 'O' it comes accross till it hits '#'
