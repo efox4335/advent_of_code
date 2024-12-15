@@ -39,7 +39,6 @@ void sim_move(char warehouse[BUF_SIZE][BUF_SIZE], cord *robot_pos, const int dir
 	}
 
 	cord cur_pos = *robot_pos;
-	int box_count = 0;
 
 	while(warehouse[cur_pos.row][cur_pos.col] != '.'){
 		//no free space to move to
@@ -116,6 +115,22 @@ int main(void)
 			}
 		}
 	}
+
+	for(int i = 0; i < move_arr_len; ++i){
+		sim_move(warehouse, &robot_pos, move_arr[i]);
+	}
+
+	int gps_cord_sum = 0;
+
+	for(int i = 0; i < warehouse_size; ++i){
+		for(int j = 0; j < warehouse_size; ++j){
+			if(warehouse[i][j] == 'O'){
+				gps_cord_sum += (100 * i) + j;
+			}
+		}
+	}
+
+	printf("%d\n", gps_cord_sum);
 
 	free(input_line);
 	return 0;
