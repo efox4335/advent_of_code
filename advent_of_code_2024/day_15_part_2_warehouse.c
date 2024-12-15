@@ -20,9 +20,9 @@ typedef struct{
 //moves box at box_pos dir without checking for collisions
 void move_box(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir)
 {
+	//sometimes boxes will be included multiple times
 	if(warehouse[box_pos.row][box_pos.col] != '[' && warehouse[box_pos.row][box_pos.col] != ']'){
-		printf("error tried to move non box at %d %d\n", box_pos.row, box_pos.col);
-		exit(1);
+		return;
 	}
 
 	switch(dir){
@@ -202,8 +202,9 @@ int can_move(char warehouse[BUF_SIZE][BUF_SIZE], cord box_pos, int dir, cord chi
 
 /*
  * simulates moving boxes and the robot
- * goes in dir marking everything as '.' keeping track of how many 'O' it comes accross till it hits '#'
- * then it will write that amount of 'O' than the robot and update the robot_pos
+ * if any boxes block the robot they are stored in a que and any boxes that block thoese ones are added to the que
+ * if any boxes hit a wall then the function returns without calling move_box
+ * a que is used because if a move can happed move box is called in reverse order so no boxes overwrite each other
 */
 void sim_move(char warehouse[BUF_SIZE][BUF_SIZE], cord *robot_pos, const int dir)
 {
@@ -225,20 +226,47 @@ void sim_move(char warehouse[BUF_SIZE][BUF_SIZE], cord *robot_pos, const int dir
 			break;
 	}
 
-	cord cur_pos = *robot_pos;
+	cord box_que[1000];
+	int get_pos = 0;
+	int put_pos = 0;
 
-	while(warehouse[cur_pos.row][cur_pos.col] != '.'){
-		//no free space to move to
-		if(warehouse[cur_pos.row][cur_pos.col] == '#'){
+	cord cur_pos = *robot_pos;
+	cur_pos.row += row_dif;
+	cur_pos.col += col_dif;
+
+	if(warehouse[cur_pos.row][cur_pos.col] == '#'){
+		return;
+	}
+
+	if(warehouse[cur_pos.row][cur_pos.col] == '[' || warehouse[cur_pos.row][cur_pos.col] == ']'){
+		box_que[put_pos] = cur_pos;
+		++put_pos;
+	}
+
+	while(put_pos != get_pos){
+		cord child_box_pos[3];
+
+		switch(can_move(warehouse, box_que[get_pos], dir, child_box_pos)){
+		case WALL:
 			return;
+		case EMPTY:
+			break;
+		case BOX:
+			for(int i = 0; child_box_pos[i].row != -1; ++i){
+				box_que[put_pos] = child_box_pos[i];
+				++put_pos;
+			}
+			break;
 		}
-		cur_pos.row += row_dif;
-		cur_pos.col += col_dif;
+
+		++get_pos;
+	}
+
+	for(int i = get_pos - 1; i >= 0; --i){
+		move_box(warehouse, box_que[i], dir);
 	}
 
 	warehouse[robot_pos->row][robot_pos->col] = '.';
-
-	warehouse[cur_pos.row][cur_pos.col] = 'O';
 
 	robot_pos->row += row_dif;
 	robot_pos->col += col_dif;
@@ -331,6 +359,22 @@ int main(void)
 			}
 		}
 	}
+
+	for(int i = 0; i < move_arr_len; ++i){
+		sim_move(warehouse, &robot_pos, move_arr[i]);
+	}
+
+	int cord_sum = 0;
+
+	for(int i = 0; i < warehouse_row_count; ++i){
+		for(int j = 0; j < warehouse_col_count; ++j){
+			if(warehouse[i][j] == '['){
+				cord_sum += (100 * i) + j;
+			}
+		}
+	}
+
+	printf("%d\n", cord_sum);
 
 	free(input_line);
 	return 0;
