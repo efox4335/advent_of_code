@@ -8,6 +8,10 @@ name = "day_1_part_1_accounting"
 path = "day_1_part_1_accounting.rs"
 
 [[bin]]
+name = "day_1_part_2_accounting"
+path = "day_1_part_2_accounting.rs"
+
+[[bin]]
 name = "day_13_part_1_bus"
 path = "day_13_part_1_bus.rs"
 
