@@ -27,6 +27,11 @@ typedef struct{
 	int dir;//the direction this tile was entered in
 }visited_tile;
 
+int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
+{
+	return ((point_tile *) heap_ele_1)->points < ((point_tile *) heap_ele_2)->points;
+}
+
 /*
  * sets possable_vists to the tiles that could be visited from cur_pos
  * sets the points to the correct value
@@ -156,6 +161,38 @@ int main(void)
 		strcpy(input[line_count], input_line);
 		++line_count;
 	}
+
+	//s is always in the same pos
+	point_tile cur_tile;
+	cur_tile.pos.row = line_count - 2;
+	cur_tile.pos.col = 1;
+	cur_tile.dir = EAST;
+	cur_tile.points = 0;
+
+	point_tile visits[3];
+
+	edsa_heap *heap = NULL;
+	edsa_htable *visited = NULL;
+
+	edsa_heap_init(&heap, 1000, sizeof(point_tile), cmp_func);
+	edsa_heap_ins(heap, &cur_tile);
+
+	edsa_htable_init(&visited, sizeof(visited_tile), sizeof(int), 1000);
+
+	while(input[cur_tile.pos.row][cur_tile.pos.col] != 'E'){
+		edsa_heap_remove(heap, &cur_tile);
+
+		int next_visit = get_next_visit(input, visited, cur_tile, visits);
+
+		for(int i = 0; i < next_visit; ++i){
+			edsa_heap_ins(heap, &visits[i]);
+		}
+	}
+
+	edsa_htable_free(visited);
+	edsa_heap_free(heap);
+
+	printf("%ld\n", cur_tile.points);
 
 	free(input_line);
 	return 0;
