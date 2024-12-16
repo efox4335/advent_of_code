@@ -1,7 +1,6 @@
 /*
  * a simple dijkstra's algorithm
- * keep traversing paths till one longer than the shortest is found
- * when a short path is found mark it
+ * recursivly traverse all paths shorter than the shortest path marking them down
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +28,11 @@ typedef struct{
 	cord pos;
 	int dir;//the direction this tile was entered in
 }visited_tile;
+
+typedef struct{
+	int ret_val;
+	int points;
+}points_retval;
 
 int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
 {
@@ -147,6 +151,49 @@ int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, poi
 	return vist_amount;
 }
 
+int get_all_paths(char maze[BUF_SIZE][BUF_SIZE], long point_lim, point_tile cur_pos, edsa_htable *vis)
+{
+	if(cur_pos.points > point_lim){
+		return 0;
+	}
+
+	visited_tile temp;
+	temp.pos.row = cur_pos.pos.row;
+	temp.pos.col = cur_pos.pos.col;
+	temp.dir = cur_pos.dir;
+	points_retval points;
+
+	if(edsa_htable_read(vis, &temp, &points) == EDSA_SUCCESS){
+		if(points.points < cur_pos.points){
+			return 0;
+		}
+	}
+
+	points.points = cur_pos.points;
+
+	if(maze[cur_pos.pos.row][cur_pos.pos.col] == 'E'){
+		printf("found\n");
+		points.ret_val = 1;
+		edsa_htable_ins(vis, &temp, &points);
+		return 1;
+	}
+
+	point_tile next_points[3];
+	int next_tiles = get_next_visit(maze, &cur_pos, next_points);
+	int ret_val = 0;
+
+	for(int i = 0; i < next_tiles; ++i){
+		if(get_all_paths(maze, point_lim, next_points[i], vis) == 1){
+			maze[cur_pos.pos.row][cur_pos.pos.col] = 'O';
+			ret_val = 1;
+		}
+	}
+
+	points.ret_val = 0;
+	edsa_htable_ins(vis, &temp, &points);
+	return ret_val;
+}
+
 int main(void)
 {
 	char *input_line = NULL;
@@ -170,6 +217,7 @@ int main(void)
 	tile_arr[tile_count].points = 0;
 	tile_arr[tile_count].parent = NULL;
 	point_tile *cur_tile_ptr = &tile_arr[tile_count];
+	++tile_count;
 
 	point_tile visits[3];
 
@@ -212,7 +260,23 @@ int main(void)
 	edsa_htable_free(visited);
 	edsa_heap_free(heap);
 
-	printf("%ld\n", cur_tile_ptr->points);
+	edsa_htable *vis = NULL;
+	edsa_htable_init(&vis, sizeof(visited_tile), sizeof(points_retval), 1000);
+
+	get_all_paths(input, cur_tile_ptr->points, tile_arr[0], vis);
+
+	int paths_len = 1;
+	for(int i = 0; i < line_count; ++i){
+		for(int j = 0; j < line_count; ++j){
+			if(input[i][j] == 'O'){
+				++paths_len;
+			}
+		}
+	}
+
+	printf("%d\n", paths_len);
+
+	edsa_htable_free(vis);
 
 	free(input_line);
 	return 0;
