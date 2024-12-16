@@ -44,7 +44,6 @@ int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
 int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, point_tile *possable_visits)
 {
 	int vist_amount = 0;
-	long temp = 0;
 
 	visited_tile foward;
 	visited_tile left;
@@ -116,7 +115,6 @@ int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, poi
 		possable_visits[vist_amount].dir = temp_visited.dir;
 		possable_visits[vist_amount].points = cur_pos->points + 1;
 		possable_visits[vist_amount].parent = cur_pos;
-		temp = possable_visits[vist_amount].points;
 		++vist_amount;
 	}
 
@@ -130,7 +128,6 @@ int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, poi
 		possable_visits[vist_amount].dir = temp_visited.dir;
 		possable_visits[vist_amount].points = cur_pos->points + 1001;
 		possable_visits[vist_amount].parent = cur_pos;
-		temp = possable_visits[vist_amount].points;
 		++vist_amount;
 	}
 
@@ -144,7 +141,6 @@ int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, poi
 		possable_visits[vist_amount].dir = temp_visited.dir;
 		possable_visits[vist_amount].points = cur_pos->points + 1001;
 		possable_visits[vist_amount].parent = cur_pos;
-		temp = possable_visits[vist_amount].points;
 		++vist_amount;
 	}
 
