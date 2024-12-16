@@ -31,7 +31,7 @@ typedef struct{
 
 int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
 {
-	return ((point_tile *) heap_ele_1)->points < ((point_tile *) heap_ele_2)->points;
+	return (*((point_tile **) heap_ele_1))->points < (*((point_tile **) heap_ele_2))->points;
 }
 
 /*
@@ -164,37 +164,44 @@ int main(void)
 		++line_count;
 	}
 
+	point_tile tile_arr[100000];
+	int tile_count = 0;
+
 	//s is always in the same pos
-	point_tile cur_tile;
-	cur_tile.pos.row = line_count - 2;
-	cur_tile.pos.col = 1;
-	cur_tile.dir = EAST;
-	cur_tile.points = 0;
+	tile_arr[tile_count].pos.row = line_count - 2;
+	tile_arr[tile_count].pos.col = 1;
+	tile_arr[tile_count].dir = EAST;
+	tile_arr[tile_count].points = 0;
+	point_tile *cur_tile_ptr = &tile_arr[tile_count];
 
 	point_tile visits[3];
 
 	edsa_heap *heap = NULL;
 	edsa_htable *visited = NULL;
 
-	edsa_heap_init(&heap, 1000, sizeof(point_tile), cmp_func);
-	edsa_heap_ins(heap, &cur_tile);
+	edsa_heap_init(&heap, 1000, sizeof(point_tile *), cmp_func);
+	edsa_heap_ins(heap, &cur_tile_ptr);
 
 	edsa_htable_init(&visited, sizeof(visited_tile), sizeof(int), 1000);
 
-	while(input[cur_tile.pos.row][cur_tile.pos.col] != 'E'){
-		edsa_heap_remove(heap, &cur_tile);
+	while(input[cur_tile_ptr->pos.row][cur_tile_ptr->pos.col] != 'E'){
+		edsa_heap_remove(heap, &cur_tile_ptr);
 
-		int next_visit = get_next_visit(input, visited, cur_tile, visits);
+		int next_visit = get_next_visit(input, visited, *cur_tile_ptr, visits);
 
 		for(int i = 0; i < next_visit; ++i){
-			edsa_heap_ins(heap, &visits[i]);
+			tile_arr[tile_count] = visits[i];
+			point_tile *tile_ptr = &tile_arr[tile_count];
+			edsa_heap_ins(heap, &tile_ptr);
+
+			++tile_count;
 		}
 	}
 
 	edsa_htable_free(visited);
 	edsa_heap_free(heap);
 
-	printf("%ld\n", cur_tile.points);
+	printf("%ld\n", cur_tile_ptr->points);
 
 	free(input_line);
 	return 0;
