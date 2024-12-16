@@ -39,10 +39,9 @@ int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
  * sets possable_vists to the tiles that could be visited from cur_pos
  * sets the points to the correct value
  * excludes tiles with '#' on them
- * excludes tiles that have been already visited
  * returns the number of tiles that could be visited from this one
 */
-int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], edsa_htable *prev_visited, point_tile *cur_pos, point_tile *possable_visits)
+int get_next_visit(const char maze[BUF_SIZE][BUF_SIZE], point_tile *cur_pos, point_tile *possable_visits)
 {
 	int vist_amount = 0;
 	long temp = 0;
@@ -203,7 +202,7 @@ int main(void)
 
 		edsa_htable_ins(visited, &temp_visited, &temp);
 
-		int next_visit = get_next_visit(input, visited, cur_tile_ptr, visits);
+		int next_visit = get_next_visit(input, cur_tile_ptr, visits);
 
 		for(int i = 0; i < next_visit; ++i){
 			tile_arr[tile_count] = visits[i];
