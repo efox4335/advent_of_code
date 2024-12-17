@@ -154,6 +154,69 @@ void print_combo(int op)
 	}
 }
 
+//emulates with register
+//modifys out_buf
+void emulate(int *ins_stack, reg_file register_file, char *out_buf)
+{
+	int ins_ptr = 0;
+	int buf_pos = 0;
+
+	while(ins_stack[ins_ptr] != -1){
+		int op = ins_stack[ins_ptr + 1];
+
+		switch(ins_stack[ins_ptr]){
+		case ADV:
+			//printf("adv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
+			register_file.reg_a = adv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		case BXL:
+			//printf("bxl %d %ld\n", op, register_file.reg_b);
+			register_file.reg_b = bxl(register_file.reg_b, op);
+			break;
+		case BST:
+			//printf("bxl %ld %ld\n", parse_combo(op, &register_file), register_file.reg_b);
+			register_file.reg_b = bst(parse_combo(op, &register_file));
+			break;
+		case JNZ:
+			//printf("jnz %d %ld\n", op, register_file.reg_a);
+			//-2 to account for increase of stack pointer
+			if(register_file.reg_a != 0){
+				ins_ptr = jnz(register_file.reg_a, op) - 2;
+			}
+			break;
+		case BXC:
+			//printf("bxc %ld %ld\n", register_file.reg_c, register_file.reg_b);
+			register_file.reg_b = bxc(register_file.reg_b, register_file.reg_c);
+			break;
+		case OUT:
+			//printf("out %ld\n", parse_combo(op, &register_file));
+			long temp = out(parse_combo(op, &register_file));
+			if(buf_pos != 0){
+				out_buf[buf_pos] = ',';
+				++buf_pos;
+			}
+
+			//output will always be one char
+			out_buf[buf_pos] = temp + '0';
+			++buf_pos;
+
+			out_buf[buf_pos] = '\n';
+			out_buf[buf_pos + 1] = '\0';
+			break;
+		case BDV:
+			//printf("bdv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
+			register_file.reg_b = bdv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		case CDV:
+			//printf("cdv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
+			register_file.reg_c = cdv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		}
+
+		ins_ptr += 2;
+	}
+}
+
 int main(void)
 {
 	enum{REGA, REGB, REGC, INS_STACK};
@@ -210,7 +273,6 @@ int main(void)
 	}
 
 	char out_buf[1000];
-	int buf_pos = 0;
 
 	while(ins_stack[ins_ptr] != -1){
 		int op = ins_stack[ins_ptr + 1];
@@ -256,62 +318,7 @@ int main(void)
 	}
 	printf("\n");
 
-	ins_ptr = 0;
-
-	while(ins_stack[ins_ptr] != -1){
-		int op = ins_stack[ins_ptr + 1];
-
-		switch(ins_stack[ins_ptr]){
-		case ADV:
-			printf("adv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
-			register_file.reg_a = adv(register_file.reg_a, parse_combo(op, &register_file));
-			break;
-		case BXL:
-			printf("bxl %d %ld\n", op, register_file.reg_b);
-			register_file.reg_b = bxl(register_file.reg_b, op);
-			break;
-		case BST:
-			printf("bxl %ld %ld\n", parse_combo(op, &register_file), register_file.reg_b);
-			register_file.reg_b = bst(parse_combo(op, &register_file));
-			break;
-		case JNZ:
-			printf("jnz %d %ld\n", op, register_file.reg_a);
-			//-2 to account for increase of stack pointer
-			if(register_file.reg_a != 0){
-				ins_ptr = jnz(register_file.reg_a, op) - 2;
-			}
-			break;
-		case BXC:
-			printf("bxc %ld %ld\n", register_file.reg_c, register_file.reg_b);
-			register_file.reg_b = bxc(register_file.reg_b, register_file.reg_c);
-			break;
-		case OUT:
-			printf("out %ld\n", parse_combo(op, &register_file));
-			long temp = out(parse_combo(op, &register_file));
-			if(buf_pos != 0){
-				out_buf[buf_pos] = ',';
-				++buf_pos;
-			}
-
-			//output will always be one char
-			out_buf[buf_pos] = temp + '0';
-			++buf_pos;
-
-			out_buf[buf_pos] = '\n';
-			out_buf[buf_pos + 1] = '\0';
-			break;
-		case BDV:
-			printf("bdv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
-			register_file.reg_b = bdv(register_file.reg_a, parse_combo(op, &register_file));
-			break;
-		case CDV:
-			printf("cdv %ld %ld\n", parse_combo(op, &register_file), register_file.reg_a);
-			register_file.reg_c = cdv(register_file.reg_a, parse_combo(op, &register_file));
-			break;
-		}
-
-		ins_ptr += 2;
-	}
+	emulate(ins_stack, register_file, out_buf);
 
 	printf("%s", out_buf);
 
