@@ -37,6 +37,7 @@ long adv(long reg_a, long cop_1)
 //returns reg_b ^ lop_1 stores in reg_b
 long bxl(long reg_b, long lop_1)
 {
+	return reg_b ^ lop_1;
 }
 
 //opcode 2 combo operand
