@@ -30,6 +30,7 @@ typedef struct{
 //equal to reg_a >>= cop_1
 long adv(long reg_a, long cop_1)
 {
+	return reg_a >> cop_1;
 }
 
 //opcode 1 literal operand
