@@ -59,6 +59,40 @@ long cdv(long reg_a, long cop_1)
 {
 }
 
+//returns the correct operand for a combo operand
+long par_combo(int cop, long reg_a, long reg_b, long reg_c)
+{
+	long val = -1;
+
+	switch(cop){
+	case 0:
+		val = 0;
+		break;
+	case 1:
+		val = 1;
+		break;
+	case 2:
+		val = 2;
+		break;
+	case 3:
+		val = 3;
+		break;
+	case 4:
+		val = reg_a;
+		break;
+	case 5:
+		val = reg_b;
+		break;
+	case 6:
+		val = reg_c;
+		break;
+	default:
+		printf("error invalid combo operand %d\n", cop);
+		exit(1);
+	}
+
+	return val;
+}
 
 int main(void)
 {
