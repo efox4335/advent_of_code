@@ -51,6 +51,7 @@ long bst(long cop_1)
 //moves ins_ptr lop_1 if reg_a != 0 if reg_a != 0 ins_ptr is not incremented
 long jnz(long reg_a, long lop_1)
 {
+	return lop_1;
 }
 
 //opcode 4 takes operand but ignores
@@ -187,7 +188,9 @@ int main(void)
 			break;
 		case JNZ:
 			//-2 to account for increase of stack pointer
-			ins_ptr = jnz(register_file.reg_a, op) - 2;
+			if(register_file.reg_a != 0){
+				ins_ptr = jnz(register_file.reg_a, op) - 2;
+			}
 			break;
 		case BXC:
 			register_file.reg_b = bxc(register_file.reg_b, register_file.reg_c);
