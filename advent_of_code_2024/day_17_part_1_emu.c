@@ -81,6 +81,7 @@ long bdv(long reg_a, long cop_1)
 //equal to reg_c = reg_a >> cop_1
 long cdv(long reg_a, long cop_1)
 {
+	return reg_a >> cop_1;
 }
 
 //returns the correct operand for a combo operand
