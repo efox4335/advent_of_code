@@ -3,6 +3,8 @@
  * store opcodes and operands on a stack a parser will decode the op
  * each op will have it's own function
  * operands will be resolved by the ins parser
+ *
+ * in my input
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -238,12 +240,12 @@ int main(void)
 		case BDV:
 			printf("bdv ");
 			print_combo(op);
-			printf("reg_a\n");
+			printf("reg_b\n");
 			break;
 		case CDV:
 			printf("cdv ");
 			print_combo(op);
-			printf("reg_a\n");
+			printf("reg_c\n");
 			break;
 		}
 
