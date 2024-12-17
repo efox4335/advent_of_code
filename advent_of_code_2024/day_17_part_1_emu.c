@@ -58,6 +58,7 @@ long jnz(long reg_a, long lop_1)
 //returns reg_b ^ reg_c stores in reg_b
 long bxc(long reg_b, long reg_c)
 {
+	return reg_b ^ reg_c;
 }
 
 //opcode 5 combo operand
