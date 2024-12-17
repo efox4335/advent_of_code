@@ -73,6 +73,7 @@ long out(long cop_1)
 //equal to reg_b = reg_a >> cop_1
 long bdv(long reg_a, long cop_1)
 {
+	return reg_a >> cop_1;
 }
 
 //opcode 7 combo operand
