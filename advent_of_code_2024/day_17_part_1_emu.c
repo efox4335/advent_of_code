@@ -2,10 +2,63 @@
  * write an emulator to emulate the cpu
  * store opcodes and operands on a stack a parser will decode the op
  * each op will have it's own function
+ * operands will be resolved by the ins parser
 */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+//op code0 combo operand
+//returns reg_a/(2^cop_1) stores in reg_a
+//equal to reg_a >>= cop_1
+long adv(long reg_a, long cop_1)
+{
+}
+
+//opcode 1 literal operand
+//returns reg_b ^ lop_1 stores in reg_b
+long bxl(long reg_b, long lop_1)
+{
+}
+
+//opcode 2 combo operand
+//returns cop_1 % 8 stores in reg_b
+long bst(long cop_1)
+{
+}
+
+//opcode 3 literal operand
+//moves ins_ptr lop_1 if reg_a != 0 if reg_a != 0 ins_ptr is not incremented
+long jnz(long reg_a, long lop_1)
+{
+}
+
+//opcode 4 takes operand but ignores
+//returns reg_b ^ reg_c stores in reg_b
+long bxc(long reg_b, long reg_c)
+{
+}
+
+//opcode 5 combo operand
+//returns cop_1 % 8 prints output (if there are multiple values seperates by coma)
+long out(long cop_1)
+{
+}
+
+//opcode 6 combo operand
+//returns reg_a/(2^cop_1) stores in reg_b
+//equal to reg_b = reg_a >> cop_1
+long bdv(long reg_a, long cop_1)
+{
+}
+
+//opcode 7 combo operand
+//returns reg_a/(2^cop_1) stores in reg_c
+//equal to reg_c = reg_a >> cop_1
+long cdv(long reg_a, long cop_1)
+{
+}
+
 
 int main(void)
 {
