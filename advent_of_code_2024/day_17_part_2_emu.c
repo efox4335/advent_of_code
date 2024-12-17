@@ -4,7 +4,10 @@
  * each op will have it's own function
  * operands will be resolved by the ins parser
  *
- * in my input
+ * in my input there is only one print per loop meaning a minimum length of reg_a in bits as 3 * input digit count
+ * in my input a is divided into 3 bit chunks per loop
+ * in my input the only thing that affects the output are the current 3 bits of reg_a and the next 3 bits
+ * with this info it is possable to work backwards through a in input digit count * 8 time
 */
 #include <stdio.h>
 #include <stdlib.h>
