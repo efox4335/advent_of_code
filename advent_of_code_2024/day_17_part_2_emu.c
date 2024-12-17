@@ -220,7 +220,7 @@ int main(void)
 			printf("bxl %d reg_b\n", op);
 			break;
 		case BST:
-			printf("bxl ");
+			printf("bst ");
 			print_combo(op);
 			printf("reg_b\n");
 			break;
