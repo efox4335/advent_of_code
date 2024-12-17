@@ -7,7 +7,8 @@
  * in my input there is only one print per loop meaning a minimum length of reg_a in bits as 3 * input digit count
  * in my input a is divided into 3 bit chunks per loop
  * in my input the only thing that affects the output are the current 3 bits of reg_a and the next 3 bits
- * with this info it is possable to work backwards through a in input digit count * 8 time
+ * with this info it is possable to work backwards through a in input digit count * 8 time as long as there is only one encoding for each number
+ * if there are multiple then every combination will have to be worked through
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -217,6 +218,41 @@ void emulate(int *ins_stack, reg_file register_file, char *out_buf)
 	}
 }
 
+//returns the lowest possable reg_a value
+//works through all encodings of each number if an encoding causes a failure
+long get_reg_a_val(int *ins_stack, int place, reg_file register_file)
+{
+	if(place < 0){
+		register_file.reg_a >>= 3;
+		return register_file.reg_a;
+	}
+
+	char out_buf[1000];
+
+	for(int j = 0; j < 8; ++j){
+		emulate(ins_stack, register_file, out_buf);
+
+		if((int)(out_buf[0] - '0') == ins_stack[place]){
+
+			register_file.reg_a <<= 3;
+
+			long temp_a = get_reg_a_val(ins_stack, place - 1, register_file);
+			if(temp_a != -1){
+				return temp_a;
+			}else{
+				register_file.reg_a >>= 3;
+			}
+		}
+
+		if(j == 7){
+			return -1;
+		}
+
+		register_file.reg_a += 1;
+	}
+}
+
+
 int main(void)
 {
 	enum{REGA, REGB, REGC, INS_STACK};
@@ -266,7 +302,6 @@ int main(void)
 			}
 
 			ins_stack[ins_ptr] = -1;
-			ins_ptr = 0;
 
 			break;
 		}
@@ -274,10 +309,10 @@ int main(void)
 
 	char out_buf[1000];
 
-	while(ins_stack[ins_ptr] != -1){
-		int op = ins_stack[ins_ptr + 1];
+	for(int i = 0; ins_stack[i] != -1; i += 2){
+		int op = ins_stack[i + 1];
 
-		switch(ins_stack[ins_ptr]){
+		switch(ins_stack[i]){
 		case ADV:
 			printf("adv ");
 			print_combo(op);
@@ -313,15 +348,16 @@ int main(void)
 			printf("reg_c\n");
 			break;
 		}
-
-		ins_ptr += 2;
 	}
 	printf("\n");
 
+	register_file.reg_a = 0;
+	register_file.reg_a = get_reg_a_val(ins_stack, ins_ptr - 1, register_file);
+
+	printf("reg_a val %ld\n", register_file.reg_a);
+
 	emulate(ins_stack, register_file, out_buf);
-
 	printf("%s", out_buf);
-
 	free(input_line);
 	return 0;
 }
