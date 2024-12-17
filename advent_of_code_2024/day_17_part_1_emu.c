@@ -65,6 +65,7 @@ long bxc(long reg_b, long reg_c)
 //returns cop_1 % 8 prints output (if there are multiple values seperates by coma)
 long out(long cop_1)
 {
+	return cop_1 % 8;
 }
 
 //opcode 6 combo operand
