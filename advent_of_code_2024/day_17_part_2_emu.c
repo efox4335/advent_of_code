@@ -244,12 +244,10 @@ long get_reg_a_val(int *ins_stack, int place, reg_file register_file)
 			}
 		}
 
-		if(j == 7){
-			return -1;
-		}
-
 		register_file.reg_a += 1;
 	}
+
+	return -1;
 }
 
 
