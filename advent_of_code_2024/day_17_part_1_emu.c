@@ -8,6 +8,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+enum{
+	ADV = 0,
+	BXL = 1,
+	BST = 2,
+	JNZ = 3,
+	BXC = 4,
+	OUT = 5,
+	BDV = 6,
+	CDV = 7
+};
+
+typedef struct{
+	long reg_a;
+	long reg_b;
+	long reg_c;
+}reg_file;
+
 //op code0 combo operand
 //returns reg_a/(2^cop_1) stores in reg_a
 //equal to reg_a >>= cop_1
@@ -60,7 +77,7 @@ long cdv(long reg_a, long cop_1)
 }
 
 //returns the correct operand for a combo operand
-long par_combo(int cop, long reg_a, long reg_b, long reg_c)
+long parse_combo(int cop, const reg_file *register_file)
 {
 	long val = -1;
 
@@ -78,13 +95,13 @@ long par_combo(int cop, long reg_a, long reg_b, long reg_c)
 		val = 3;
 		break;
 	case 4:
-		val = reg_a;
+		val = register_file->reg_a;
 		break;
 	case 5:
-		val = reg_b;
+		val = register_file->reg_b;
 		break;
 	case 6:
-		val = reg_c;
+		val = register_file->reg_c;
 		break;
 	default:
 		printf("error invalid combo operand %d\n", cop);
@@ -98,9 +115,10 @@ int main(void)
 {
 	enum{REGA, REGB, REGC, INS_STACK};
 
-	long reg_a = -1;
-	long reg_b = -1;
-	long reg_c = -1;
+	reg_file register_file;
+	register_file.reg_a = -1;
+	register_file.reg_b = -1;
+	register_file.reg_c = -1;
 
 	int parse_part = REGA;
 
@@ -119,17 +137,17 @@ int main(void)
 		switch(parse_part){
 		case REGA:
 			temp_ptr = strtok(input_line, "Registr A:\n");
-			reg_a = atol(temp_ptr);
+			register_file.reg_a = atol(temp_ptr);
 			parse_part = REGB;
 			break;
 		case REGB:
 			temp_ptr = strtok(input_line, "Registr B:\n");
-			reg_b = atol(temp_ptr);
+			register_file.reg_b = atol(temp_ptr);
 			parse_part = REGC;
 			break;
 		case REGC:
 			temp_ptr = strtok(input_line, "Registr C:\n");
-			reg_c = atol(temp_ptr);
+			register_file.reg_c = atol(temp_ptr);
 			parse_part = INS_STACK;
 			break;
 		case INS_STACK:
@@ -146,6 +164,54 @@ int main(void)
 
 			break;
 		}
+	}
+
+	char out_buf[1000];
+	int buf_pos = 0;
+
+	while(ins_stack[ins_ptr] != -1){
+		int op = ins_stack[ins_ptr + 1];
+
+		switch(ins_stack[ins_ptr]){
+		case ADV:
+			register_file.reg_a = adv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		case BXL:
+			register_file.reg_b = bxl(register_file.reg_b, op);
+			break;
+		case BST:
+			register_file.reg_b = bst(parse_combo(op, &register_file));
+			break;
+		case JNZ:
+			//-2 to account for increase of stack pointer
+			ins_ptr = jnz(register_file.reg_a, op) - 2;
+			break;
+		case BXC:
+			register_file.reg_b = bxc(register_file.reg_b, register_file.reg_c);
+			break;
+		case OUT:
+			long temp = out(parse_combo(op, &register_file));
+			if(buf_pos != 0){
+				out_buf[buf_pos] = ',';
+				++buf_pos;
+			}
+
+			//output will always be one char
+			out_buf[buf_pos] = temp + '0';
+			++buf_pos;
+
+			out_buf[buf_pos] = '\n';
+			out_buf[buf_pos + 1] = '\0';
+			break;
+		case BDV:
+			register_file.reg_b = bdv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		case CDV:
+			register_file.reg_c = cdv(register_file.reg_a, parse_combo(op, &register_file));
+			break;
+		}
+
+		ins_ptr += 2;
 	}
 
 	free(input_line);
