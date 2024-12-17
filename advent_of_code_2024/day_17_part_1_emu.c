@@ -224,6 +224,8 @@ int main(void)
 		ins_ptr += 2;
 	}
 
+	printf("%s", out_buf);
+
 	free(input_line);
 	return 0;
 }
