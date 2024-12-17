@@ -44,6 +44,7 @@ long bxl(long reg_b, long lop_1)
 //returns cop_1 % 8 stores in reg_b
 long bst(long cop_1)
 {
+	return cop_1 % 8;
 }
 
 //opcode 3 literal operand
