@@ -1,3 +1,7 @@
+/*
+ * just count and compare
+*/
+
 use std::io::stdin;
 
 fn main() {
