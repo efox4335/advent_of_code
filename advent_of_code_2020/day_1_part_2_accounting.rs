@@ -20,8 +20,8 @@ fn main() {
     }
 
     let mut second_order_map = HashMap::<i32, i32>::new();
-    for val in map.iter(){
-        for num in input.iter(){
+    for val in map.iter() {
+        for num in input.iter() {
             second_order_map.insert(val.0 - num, *num);
         }
     }
