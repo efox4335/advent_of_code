@@ -7,7 +7,6 @@
 #include <string.h>
 #include "include/edsa.h"
 
-enum{READ_AMOUNT = 1024};
 enum{ROW_AMOUNT = 71, COL_AMOUNT = 71};
 
 typedef struct{
@@ -99,7 +98,9 @@ int path_find(const char mem_space[ROW_AMOUNT][COL_AMOUNT])
 	point_tile *cur_pos;
 
 	do{
-		edsa_heap_remove(heap, &cur_pos);
+		if(edsa_heap_remove(heap, &cur_pos) == EDSA_HEAP_REMOVE_HEAP_EMPTY){
+			return -1;
+		}
 
 		point_tile next[4];
 		int next_amount = get_next_visit(mem_space, cur_pos, next);
@@ -148,17 +149,12 @@ int main(void)
 	int count = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
-		if(count >= READ_AMOUNT){
-			break;
-		}
-
 		cord temp_cord;
 
 		char *temp_ptr = strtok(input_line, delim);
 		temp_cord.col = atol(temp_ptr);
 
 		if(temp_cord.col >= COL_AMOUNT){
-			++count;
 			continue;
 		}
 
@@ -166,16 +162,16 @@ int main(void)
 		temp_cord.row = atol(temp_ptr);
 
 		if(temp_cord.row >= ROW_AMOUNT){
-			++count;
 			continue;
 		}
 
 		mem_space[temp_cord.row][temp_cord.col] = '#';
 
-		++count;
+		if(path_find(mem_space) == -1){
+			printf("%ld,%ld\n", temp_cord.col, temp_cord.row);
+			break;
+		}
 	}
-
-	printf("%d\n", path_find(mem_space));
 
 	free(input_line);
 	return 0;
