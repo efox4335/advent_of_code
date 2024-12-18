@@ -1,3 +1,7 @@
+/*
+ * use mod op to loop without needing to dupclate input
+*/
+
 use std::io::stdin;
 
 struct Pos {
