@@ -132,6 +132,19 @@ int path_find(const char mem_space[ROW_AMOUNT][COL_AMOUNT])
 	return cur_pos->points;
 }
 
+void mark_map(char mem_space[ROW_AMOUNT][COL_AMOUNT], cord *errors, int error_amount_ind)
+{
+	for(int i = 0; i < ROW_AMOUNT; ++i){
+		for(int j = 0; j < COL_AMOUNT; ++j){
+			mem_space[i][j] = '.';
+		}
+	}
+
+	for(int i = 0; i <= error_amount_ind; ++i){
+		mem_space[errors[i].row][errors[i].col] = '#';
+	}
+}
+
 int main(void)
 {
 	char *input_line = NULL;
@@ -139,13 +152,11 @@ int main(void)
 
 	char mem_space[ROW_AMOUNT][COL_AMOUNT];
 
-	for(int i = 0; i < ROW_AMOUNT; ++i){
-		for(int j = 0; j < COL_AMOUNT; ++j){
-			mem_space[i][j] = '.';
-		}
-	}
+
 
 	char delim[] = ",\n";
+	cord errors[10000];
+	int error_count = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
 		cord temp_cord;
@@ -164,11 +175,34 @@ int main(void)
 			continue;
 		}
 
-		mem_space[temp_cord.row][temp_cord.col] = '#';
+		errors[error_count] = temp_cord;
+		++error_count;
+	}
 
-		if(path_find(mem_space) == -1){
-			printf("%ld,%ld\n", temp_cord.col, temp_cord.row);
-			break;
+	int upper = error_count - 1;
+	int lower = 0;
+	int mid = 0;
+	while(1){
+		mid = lower + (upper - lower) / 2;
+
+		mark_map(mem_space, errors, mid);
+
+		int ret_val = path_find(mem_space);
+
+		if(upper <= lower){
+			if(ret_val == -1){
+				printf("%ld,%ld\n", errors[mid].col, errors[mid].row);
+				break;
+			}else{
+				printf("%ld,%ld\n", errors[mid + 1].col, errors[mid + 1].row);
+				break;
+			}
+		}
+
+		if(ret_val == -1){
+			upper = mid - 1;
+		}else{
+			lower = mid + 1;
 		}
 	}
 
