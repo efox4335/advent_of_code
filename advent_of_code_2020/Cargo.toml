@@ -24,6 +24,10 @@ name = "day_3_part_1_toboggan"
 path = "day_3_part_1_toboggan.rs"
 
 [[bin]]
+name = "day_3_part_2_toboggan"
+path = "day_3_part_2_toboggan.rs"
+
+[[bin]]
 name = "day_13_part_1_bus"
 path = "day_13_part_1_bus.rs"
 
