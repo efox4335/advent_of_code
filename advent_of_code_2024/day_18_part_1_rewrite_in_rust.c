@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "include/edsa.h"
 
 enum{READ_AMOUNT = 1024};
 enum{ROW_AMOUNT = 71, COL_AMOUNT = 71};
@@ -12,6 +13,61 @@ typedef struct{
 	long row;
 	long col;
 }cord;
+
+typedef struct{
+	cord pos;
+	int points;
+}point_tile;
+
+/*
+ * sets possable_vists to the tiles that could be visited from cur_pos
+ * sets the points to the correct value
+ * excludes tiles with '#' on them
+ * excludes tiles that are already visited
+ * returns the number of tiles that could be visited from this one
+*/
+int get_next_visit(const char maze[ROW_AMOUNT][COL_AMOUNT], const point_tile cur_pos, point_tile *possable_visits)
+{
+	int vist_amount = 0;
+
+	//NORTH
+	if(cur_pos.pos.row > 0 && maze[cur_pos.pos.row - 1][cur_pos.pos.col] != '#'){
+		possable_visits[vist_amount].pos.row = cur_pos.pos.row - 1;
+		possable_visits[vist_amount].pos.col = cur_pos.pos.col;
+		possable_visits[vist_amount].points = cur_pos.points + 1;
+
+		++vist_amount;
+	}
+
+	//SOUTH
+	if(cur_pos.pos.row < ROW_AMOUNT - 1 && maze[cur_pos.pos.row + 1][cur_pos.pos.col] != '#'){
+		possable_visits[vist_amount].pos.row = cur_pos.pos.row + 1;
+		possable_visits[vist_amount].pos.col = cur_pos.pos.col;
+		possable_visits[vist_amount].points = cur_pos.points + 1;
+
+		++vist_amount;
+	}
+
+	//WEST
+	if(cur_pos.pos.col > 0 && maze[cur_pos.pos.row][cur_pos.pos.col - 1] != '#'){
+		possable_visits[vist_amount].pos.row = cur_pos.pos.row;
+		possable_visits[vist_amount].pos.col = cur_pos.pos.col - 1;
+		possable_visits[vist_amount].points = cur_pos.points + 1;
+
+		++vist_amount;
+	}
+
+	//EAST
+	if(cur_pos.pos.col < COL_AMOUNT - 1 && maze[cur_pos.pos.row][cur_pos.pos.col + 1] != '#'){
+		possable_visits[vist_amount].pos.row = cur_pos.pos.row;
+		possable_visits[vist_amount].pos.col = cur_pos.pos.col + 1;
+		possable_visits[vist_amount].points = cur_pos.points + 1;
+
+		++vist_amount;
+	}
+
+	return vist_amount;
+}
 
 int main(void)
 {
