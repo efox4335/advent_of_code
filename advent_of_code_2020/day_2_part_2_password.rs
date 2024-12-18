@@ -7,20 +7,17 @@ fn main() {
         let temp = line.unwrap();
         let mut sub_str = temp.split([' ', ':', '\n', '-']);
 
-        let lower_bound: i32 = sub_str.next().unwrap().parse().unwrap();
-        let upper_bound: i32 = sub_str.next().unwrap().parse().unwrap();
+        let lower_bound: usize = sub_str.next().unwrap().parse::<usize>().unwrap() - 1;
+        let upper_bound: usize = sub_str.next().unwrap().parse::<usize>().unwrap() - 1;
 
         let letter: char = sub_str.next().unwrap().chars().nth(0).unwrap();
 
         sub_str.next();
-        let count = sub_str
-            .next()
-            .unwrap()
-            .chars()
-            .filter(|c| *c as char == letter)
-            .count() as i32;
+        let pass: Vec<char> = sub_str.next().unwrap().chars().collect();
 
-        if count >= lower_bound && count <= upper_bound {
+        if (pass[lower_bound] == letter || pass[upper_bound] == letter)
+            && pass[lower_bound] != pass[upper_bound]
+        {
             valid_pass += 1;
         }
     }
