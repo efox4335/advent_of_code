@@ -19,7 +19,7 @@ typedef struct{
 	int points;
 }point_tile;
 
-int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
+int cmp_func(const void *restrict heap_ele_1, const void *restrict heap_ele_2)
 {
 	return (*((point_tile **) heap_ele_1))->points < (*((point_tile **) heap_ele_2))->points;
 }
@@ -31,7 +31,7 @@ int cmp_func(const void *heap_ele_1, const void *heap_ele_2)
  * excludes tiles that are already visited
  * returns the number of tiles that could be visited from this one
 */
-int get_next_visit(const char maze[ROW_AMOUNT][COL_AMOUNT], const point_tile *cur_pos, point_tile *possable_visits)
+int get_next_visit(const char maze[ROW_AMOUNT][COL_AMOUNT], const point_tile *restrict cur_pos, point_tile *restrict possable_visits)
 {
 	int vist_amount = 0;
 
@@ -80,7 +80,7 @@ int path_find(const char mem_space[ROW_AMOUNT][COL_AMOUNT])
 	edsa_heap *heap = NULL;
 	edsa_htable *visited = NULL;
 
-	point_tile tile_arr[10000];
+	point_tile tile_arr[9000];
 	int tile_arr_index = 0;
 
 	tile_arr[tile_arr_index].pos.row = 0;
@@ -146,7 +146,6 @@ int main(void)
 	}
 
 	char delim[] = ",\n";
-	int count = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
 		cord temp_cord;
