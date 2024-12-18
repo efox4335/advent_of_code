@@ -16,6 +16,10 @@ name = "day_2_part_1_password"
 path = "day_2_part_1_password.rs"
 
 [[bin]]
+name = "day_2_part_2_password"
+path = "day_2_part_2_password.rs"
+
+[[bin]]
 name = "day_13_part_1_bus"
 path = "day_13_part_1_bus.rs"
 
