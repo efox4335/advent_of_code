@@ -41,12 +41,12 @@ fn main() {
         Slope {
             row_dif: 2,
             col_dif: 1,
-        }
+        },
     ];
 
     let mut tree_prod = 1;
 
-    for slope in slopes{
+    for slope in slopes {
         let row_dif: usize = slope.row_dif;
         let col_dif: usize = slope.col_dif;
 
