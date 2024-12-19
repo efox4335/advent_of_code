@@ -4,6 +4,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //represents consuming no char for a state
 enum{START_STATE = '\0', OR_STATE = '\r'};
@@ -16,6 +17,9 @@ typedef struct{
 
 /*
  * returns new state_count
+ *
+ * special case for the first string no or state is added
+ *
  * adds new state by
  * adding an or state at the end
  * than making or_next_state == next_state of start
@@ -25,13 +29,17 @@ typedef struct{
 */
 int add_string(state *state_arr, int state_count, int start_state, char *str)
 {
-	state_arr[state_count].match = OR_STATE;
-	state_arr[state_count].or_next_state = state_arr[start_state].next_state;
-	state_arr[state_count].next_state = state_count + 1;
+	if(state_count == 1){
+		state_arr[start_state].next_state = state_count;
+	}else{
+		state_arr[state_count].match = OR_STATE;
+		state_arr[state_count].or_next_state = state_arr[start_state].next_state;
+		state_arr[state_count].next_state = state_count + 1;
 
-	state_arr[start_state].next_state = state_count;
+		state_arr[start_state].next_state = state_count;
 
-	++state_count;
+		++state_count;
+	}
 
 	for(int i = 0; str[i] != '\0'; ++i){
 		state_arr[state_count].match = str[i];
@@ -61,8 +69,25 @@ int main(void)
 	state_arr[START].next_state = START;
 	++state_count;
 
-	while(getline(&input_line, &lim, stdin) > 0){
+	char *temp_match = NULL;
+	char delim[] = ", \n";
 
+	while(getline(&input_line, &lim, stdin) > 0){
+		switch(cur_part){
+		case MATCHES:
+			temp_match = strtok(input_line, delim);
+
+			while(temp_match != NULL){
+				state_count = add_string(state_arr, state_count, START, temp_match);
+
+				temp_match = strtok(NULL, delim);
+			}
+
+			cur_part = INPUTS;
+			break;
+		case INPUTS:
+			break;
+		}
 	}
 
 	free(input_line);
