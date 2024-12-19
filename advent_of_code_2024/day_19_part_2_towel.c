@@ -59,30 +59,40 @@ int add_string(state *state_arr, int state_count, int start_state, char *str)
  * for the start state this is equal to the sum of all ways each string ending this char could have been reached
  * for non start states this is equal to the way each state before it could be reached
 */
-long match_char(char cur_char, state *state_arr, int cur_char_states[2][3000], int next_char_states[2][3000], int *next_char_state_count, int cur_char_state_count)
+long match_char(char cur_char, state *state_arr, long cur_char_states[2][3000], long next_char_states[2][3000], int *next_char_state_count, int cur_char_state_count)
 {
-	int start_pos_reached = 0;
+	long start_pos_reached = 0;
+	int start_ind = 0;
 	*next_char_state_count = 0;
 
 	for(int i = 0; i < cur_char_state_count; ++i){
 		if(state_arr[cur_char_states[0][i]].match == START_STATE){
 			cur_char_states[0][cur_char_state_count] = state_arr[cur_char_states[0][i]].next_state;
+			cur_char_states[1][cur_char_state_count] = cur_char_states[1][i];
 			++cur_char_state_count;
 		}else if(state_arr[cur_char_states[0][i]].match == OR_STATE){
 			cur_char_states[0][cur_char_state_count] = state_arr[cur_char_states[0][i]].next_state;
+			cur_char_states[1][cur_char_state_count] = cur_char_states[1][i];
 			++cur_char_state_count;
 
 			cur_char_states[0][cur_char_state_count] = state_arr[cur_char_states[0][i]].or_next_state;
+			cur_char_states[1][cur_char_state_count] = cur_char_states[1][i];
 			++cur_char_state_count;
 		}else if(cur_char == state_arr[cur_char_states[0][i]].match){
 			if(state_arr[cur_char_states[0][i]].next_state == 0){
 				if(start_pos_reached == 0){
-					start_pos_reached = 1;
+					start_pos_reached = cur_char_states[1][i];
 					next_char_states[0][*next_char_state_count] = state_arr[cur_char_states[0][i]].next_state;
+					next_char_states[1][*next_char_state_count] = start_pos_reached;
+					start_ind = *next_char_state_count;
 					*next_char_state_count += 1;
+				}else{
+					start_pos_reached += cur_char_states[1][i];
+					next_char_states[1][start_ind] = start_pos_reached;
 				}
 			}else{
 				next_char_states[0][*next_char_state_count] = state_arr[cur_char_states[0][i]].next_state;
+				next_char_states[1][*next_char_state_count] = cur_char_states[1][i];
 				*next_char_state_count += 1;
 			}
 		}
@@ -110,12 +120,12 @@ int main(void)
 	char *temp_match = NULL;
 	char delim[] = ", \n";
 
-	int cur_char_states[2][3000];
-	int next_char_states[2][3000];
+	long cur_char_states[2][3000];
+	long next_char_states[2][3000];
 	int next_char_state_count = 0;
 	int cur_char_state_count = 0;
 
-	int valid_pat_count = 0;
+	long valid_pat_count = 0;
 
 	while(getline(&input_line, &lim, stdin) > 0){
 		switch(cur_part){
@@ -131,7 +141,7 @@ int main(void)
 			cur_part = INPUTS;
 			break;
 		case INPUTS:
-			int valid_match = 0;
+			long valid_match = 0;
 			void *arr_ptr = cur_char_states;
 			void *arr_ptr_2 = next_char_states;
 			void *temp_ptr = NULL;
@@ -139,7 +149,8 @@ int main(void)
 			cur_char_state_count = 0;
 			next_char_state_count = 0;
 
-			cur_char_statest[0][cur_char_state_count] = START;
+			cur_char_states[0][cur_char_state_count] = START;
+			cur_char_states[1][cur_char_state_count] = 1;
 
 			++cur_char_state_count;
 
@@ -153,15 +164,14 @@ int main(void)
 				arr_ptr_2 = temp_ptr;
 			}
 
-			if(valid_match == 1){
-				++valid_pat_count;
-			}
+			valid_pat_count += valid_match;
+
 
 			break;
 		}
 	}
 
-	printf("%d\n", valid_pat_count);
+	printf("%ld\n", valid_pat_count);
 
 	free(input_line);
 	return 0;
