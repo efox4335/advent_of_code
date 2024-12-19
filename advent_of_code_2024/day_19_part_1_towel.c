@@ -53,6 +53,39 @@ int add_string(state *state_arr, int state_count, int start_state, char *str)
 	return state_count;
 }
 
+//returns 1 if start state was added this char eg. if a full match was made for this char
+int match_char(char cur_char, state *state_arr, int *cur_char_states, int *next_char_states, int *next_char_state_count, int cur_char_state_count)
+{
+	int start_added = 0;
+	*next_char_state_count = 0;
+
+	for(int i = 0; i < cur_char_state_count; ++i){
+		if(state_arr[cur_char_states[i]].match == START_STATE){
+			cur_char_states[cur_char_state_count] = state_arr[cur_char_states[i]].next_state;
+			++cur_char_state_count;
+		}else if(state_arr[cur_char_states[i]].match == OR_STATE){
+			cur_char_states[cur_char_state_count] = state_arr[cur_char_states[i]].next_state;
+			++cur_char_state_count;
+
+			cur_char_states[cur_char_state_count] = state_arr[cur_char_states[i]].or_next_state;
+			++cur_char_state_count;
+		}else if(cur_char == state_arr[cur_char_states[i]].match){
+			if(state_arr[cur_char_states[i]].next_state == 0){
+				if(start_added == 0){
+					start_added = 1;
+					next_char_states[*next_char_state_count] = state_arr[cur_char_states[i]].next_state;
+					*next_char_state_count += 1;
+				}
+			}else{
+				next_char_states[*next_char_state_count] = state_arr[cur_char_states[i]].next_state;
+				*next_char_state_count += 1;
+			}
+		}
+	}
+
+	return start_added;
+}
+
 int main(void)
 {
 	enum{MATCHES, INPUTS};
@@ -72,6 +105,13 @@ int main(void)
 	char *temp_match = NULL;
 	char delim[] = ", \n";
 
+	int cur_char_states[3000];
+	int next_char_states[3000];
+	int next_char_state_count = 0;
+	int cur_char_state_count = 0;
+
+	int valid_pat_count = 0;
+
 	while(getline(&input_line, &lim, stdin) > 0){
 		switch(cur_part){
 		case MATCHES:
@@ -86,9 +126,37 @@ int main(void)
 			cur_part = INPUTS;
 			break;
 		case INPUTS:
+			int valid_match = 0;
+			int *arr_ptr = cur_char_states;
+			int *arr_ptr_2 = next_char_states;
+			int *temp_ptr = NULL;
+
+			cur_char_state_count = 0;
+			next_char_state_count = 0;
+
+			arr_ptr[cur_char_state_count] = START;
+
+			++cur_char_state_count;
+
+			for(int i = 0; input_line[i] != '\n'; ++i){
+				valid_match = match_char(input_line[i], state_arr, arr_ptr, arr_ptr_2, &next_char_state_count, cur_char_state_count);
+
+				cur_char_state_count = next_char_state_count;
+
+				temp_ptr = arr_ptr;
+				arr_ptr = arr_ptr_2;
+				arr_ptr_2 = temp_ptr;
+			}
+
+			if(valid_match == 1){
+				++valid_pat_count;
+			}
+
 			break;
 		}
 	}
+
+	printf("%d\n", valid_pat_count);
 
 	free(input_line);
 	return 0;
