@@ -9,6 +9,7 @@
 #include <string.h>
 
 enum{BUF_SIZE = 200};
+enum{END_VAL = -2, START_VAL = -3, WALL = -1, PATH = -4};
 
 typedef struct{
 	int row;
@@ -27,28 +28,28 @@ cord get_next(const int input[BUF_SIZE][BUF_SIZE], cord cur_pos, cord last_pos)
 	//NORTH
 	next_pos.row = cur_pos.row + NORTH.row;
 	next_pos.col = cur_pos.col + NORTH.col;
-	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
+	if(input[next_pos.row][next_pos.col] != WALL && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//SOUTH
 	next_pos.row = cur_pos.row + SOUTH.row;
 	next_pos.col = cur_pos.col + SOUTH.col;
-	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
+	if(input[next_pos.row][next_pos.col] != WALL && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//WEST
 	next_pos.row = cur_pos.row + WEST.row;
 	next_pos.col = cur_pos.col + WEST.col;
-	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
+	if(input[next_pos.row][next_pos.col] != WALL && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//EAST
 	next_pos.row = cur_pos.row + EAST.row;
 	next_pos.col = cur_pos.col + EAST.col;
-	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
+	if(input[next_pos.row][next_pos.col] != WALL && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 }
@@ -66,7 +67,20 @@ int main(void)
 
 	while(getline(&input_line, &lim, stdin) > 1){
 		for(int i = 0; input_line[i] != '\n'; ++i){
-			input[line_count][i] = input_line[i];
+			switch(input_line[i]){
+			case '.':
+				input[line_count][i] = PATH;
+				break;
+			case '#':
+				input[line_count][i] = WALL;
+				break;
+			case 'S':
+				input[line_count][i] = START_VAL;
+				break;
+			case 'E':
+				input[line_count][i] = END_VAL;
+				break;
+			}
 
 			if(input_line[i] == 'S'){
 				st_pos.row = line_count;
@@ -87,7 +101,7 @@ int main(void)
 	cur_pos.col = st_pos.col;
 	cord las_pos = cur_pos;
 
-	for(int i = 0; input[cur_pos.row][cur_pos.col] != 'E'; ++i){
+	for(int i = 0; input[cur_pos.row][cur_pos.col] != END_VAL; ++i){
 		cord next_pos = get_next(input, cur_pos, las_pos);
 
 		input[cur_pos.row][cur_pos.col] = i;
