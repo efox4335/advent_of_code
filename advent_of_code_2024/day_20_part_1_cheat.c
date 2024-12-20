@@ -2,7 +2,7 @@
  * mark each path with it's distance from the start
  * the time a shortcut saves is equal to the differences of dist from start - cut len
  * a cut is only valid if it is adjcent to the normal path
- * i'm going on the assumpiton that .##. would have a valid cut
+ * i'm going on the assumpiton that .##. would not be a valid cut
 */
 #include <stdio.h>
 #include <stdlib.h>
