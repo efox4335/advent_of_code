@@ -15,7 +15,7 @@ typedef struct{
 	int col;
 }cord;
 
-cord get_next(const char input[BUF_SIZE][BUF_SIZE], cord cur_pos, cord last_pos)
+cord get_next(const int input[BUF_SIZE][BUF_SIZE], cord cur_pos, cord last_pos)
 {
 	const cord NORTH = {-1, 0};
 	const cord SOUTH = {1, 0};
@@ -27,35 +27,35 @@ cord get_next(const char input[BUF_SIZE][BUF_SIZE], cord cur_pos, cord last_pos)
 	//NORTH
 	next_pos.row = cur_pos.row + NORTH.row;
 	next_pos.col = cur_pos.col + NORTH.col;
-	if(input[next_pos.row][next_pos.col] != '#' && last_pos.row != next_pos.row && last_pos.col != next_pos.col){
+	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//SOUTH
 	next_pos.row = cur_pos.row + SOUTH.row;
 	next_pos.col = cur_pos.col + SOUTH.col;
-	if(input[next_pos.row][next_pos.col] != '#' && last_pos.row != next_pos.row && last_pos.col != next_pos.col){
+	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//WEST
 	next_pos.row = cur_pos.row + WEST.row;
 	next_pos.col = cur_pos.col + WEST.col;
-	if(input[next_pos.row][next_pos.col] != '#' && last_pos.row != next_pos.row && last_pos.col != next_pos.col){
+	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 
 	//EAST
 	next_pos.row = cur_pos.row + EAST.row;
 	next_pos.col = cur_pos.col + EAST.col;
-	if(input[next_pos.row][next_pos.col] != '#' && last_pos.row != next_pos.row && last_pos.col != next_pos.col){
+	if(input[next_pos.row][next_pos.col] != '#' && (last_pos.row != next_pos.row || last_pos.col != next_pos.col)){
 		return next_pos;
 	}
 }
 
 int main(void)
 {
-	char input[BUF_SIZE][BUF_SIZE];
+	int input[BUF_SIZE][BUF_SIZE];
 	int line_count = 0;
 
 	char *input_line = NULL;
@@ -80,6 +80,20 @@ int main(void)
 		}
 
 		++line_count;
+	}
+
+	cord cur_pos;
+	cur_pos.row = st_pos.row;
+	cur_pos.col = st_pos.col;
+	cord las_pos = cur_pos;
+
+	for(int i = 0; input[cur_pos.row][cur_pos.col] != 'E'; ++i){
+		cord next_pos = get_next(input, cur_pos, las_pos);
+
+		input[cur_pos.row][cur_pos.col] = i;
+
+		las_pos = cur_pos;
+		cur_pos = next_pos;
 	}
 
 	free(input_line);
