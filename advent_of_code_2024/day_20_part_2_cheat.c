@@ -123,6 +123,11 @@ int get_cut_dif(const int input[BUF_SIZE][BUF_SIZE], const cord cut_pos, const i
 	return (max_path_len - min_path_len) - 2;
 }
 
+int get_taxi_dist(cord pos_1, cord pos_2)
+{
+	return abs(pos_1.row - pos_2.row) + abs(pos_1.col - pos_2.col);
+}
+
 int main(void)
 {
 	int input[BUF_SIZE][BUF_SIZE];
