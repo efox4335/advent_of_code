@@ -26,7 +26,7 @@
  * because of the no empty button rule for the keypad go right then down and up than left
  * for control robots go down than left and right than up
  *
- * backwards does not always yeld the shortest input because this is a limited version of the traveling salesmen problem
+ * backwards does not always yeld the shortest input
  * eg the visit order provided by << ^^ may be shorter for a later robot than ^^ <<
  * every time 2 directions appear in order like this both options are tried
  * each gap between a presses can be processed separately it's length does not affect later gaps
