@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "include/edsa.h"
 
 typedef struct{
 	int row;
@@ -279,28 +280,44 @@ int get_robot_control_dir(char button_1, char button_2, directions *dir)
 	return can_invert;
 }
 
+typedef struct{
+	char output[1000];
+	int num;
+}call_parem;
 
 /*
  * sets starting point to 'A'
- * sets input to the shortest string that produses output with num robots
- * returns the length of input
+ * returns the length of the shortest possable input that could have produced output
 */
-long get_shortest_input_recur(char *output, int num)
+long get_shortest_input_recur(char *output, int num, edsa_htable *shortest_input_cashe)
 {
+	call_parem args;
+	memset(args.output, 0, 1000);
+	strcpy(args.output, output);
+	args.num = num;
+
+	long ret_val;
+
+	if(edsa_htable_read(shortest_input_cashe, &args, &ret_val) == EDSA_SUCCESS){
+		return ret_val;
+	}
+
 	if(num == 0){
 		return strlen(output);
 	}
 
 	char last_pos = 'A';
-	int input_len = 0;
+	long input_len = 0;
 
 	for(int i = 0; output[i] != '\0'; ++i){
 		directions temp;
 		int can_inv = get_robot_control_dir(last_pos, output[i], &temp);
 		last_pos = output[i];
 
-		char temp_output[100000];
+		char temp_output[1000];
 		int temp_output_len = 0;
+
+
 
 		encode_dir(temp.dir_1, &temp_output[temp_output_len]);
 		temp_output_len += temp.dir_1.mag;
@@ -309,7 +326,7 @@ long get_shortest_input_recur(char *output, int num)
 		temp_output[temp_output_len] = 'A';
 		temp_output[temp_output_len + 1] = '\0';
 
-		int or_1_len = get_shortest_input_recur(temp_output, num - 1);
+		long or_1_len = get_shortest_input_recur(temp_output, num - 1, shortest_input_cashe);
 
 		if(can_inv){
 			temp_output_len = 0;
@@ -320,7 +337,7 @@ long get_shortest_input_recur(char *output, int num)
 			temp_output[temp_output_len] = 'A';
 			temp_output[temp_output_len + 1] = '\0';
 
-			int or_2_len = get_shortest_input_recur(temp_output, num - 1);
+			long or_2_len = get_shortest_input_recur(temp_output, num - 1, shortest_input_cashe);
 
 			if(or_2_len < or_1_len){
 				input_len += or_2_len;
@@ -332,24 +349,28 @@ long get_shortest_input_recur(char *output, int num)
 		}
 	}
 
+	edsa_htable_ins(shortest_input_cashe, &args, &input_len);
+
 	return input_len;
 }
 
 /*
- * sets input to the shortest string that produses output with 3 robots
- * returns the length of input
+ * returns the length of the shortest possable input that could have produced output
 */
 long get_shortest_input(char *output)
 {
 	char last_pos = 'A';
-	int input_len = 0;
+	long input_len = 0;
+
+	edsa_htable *shortest_input_cashe = NULL;
+	edsa_htable_init(&shortest_input_cashe, sizeof(call_parem), sizeof(long), 10000);
 
 	for(int i = 0; output[i] != '\n'; ++i){
 		directions temp;
 		int can_inv = get_keypad_dir(last_pos, output[i], &temp);
 		last_pos = output[i];
 
-		char temp_output[100000];
+		char temp_output[1000];
 		int temp_output_len = 0;
 
 		encode_dir(temp.dir_1, &temp_output[temp_output_len]);
@@ -359,7 +380,7 @@ long get_shortest_input(char *output)
 		temp_output[temp_output_len] = 'A';
 		temp_output[temp_output_len + 1] = '\0';
 
-		int or_1_len = get_shortest_input_recur(temp_output, 2);
+		long or_1_len = get_shortest_input_recur(temp_output, 25, shortest_input_cashe);
 
 		if(can_inv){
 			temp_output_len = 0;
@@ -370,7 +391,7 @@ long get_shortest_input(char *output)
 			temp_output[temp_output_len] = 'A';
 			temp_output[temp_output_len + 1] = '\0';
 
-			int or_2_len = get_shortest_input_recur(temp_output, 2);
+			long or_2_len = get_shortest_input_recur(temp_output, 25, shortest_input_cashe);
 
 			if(or_2_len < or_1_len){
 				input_len += or_2_len;
@@ -381,6 +402,8 @@ long get_shortest_input(char *output)
 			input_len += or_1_len;
 		}
 	}
+
+	edsa_htable_free(shortest_input_cashe);
 
 	return input_len;
 }
