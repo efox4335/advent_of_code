@@ -56,7 +56,7 @@ typedef struct{
  * sets dit to how to get from button_1 to button_2
  * returns weather dir can be inverted
 */
-int get_keypad_dist(char button_1, char button_2, directions *dir)
+int get_keypad_dir(char button_1, char button_2, directions *dir)
 {
 	const cord seven = {0, 0};
 	const cord eight = {0, 1};
@@ -191,30 +191,6 @@ void encode_dir(vector enc, char *output)
 	output[enc.mag] = '\0';
 }
 
-//sets robot_control to the button presses reqired to input code
-void get_key_pad_robot_control(char *code, char *robot_control)
-{
-	int control_index = 0;
-
-	char cur_place = 'A';
-
-	for(int i = 0; code[i] != '\n'; ++i){
-		directions dir;
-
-		get_keypad_dist(cur_place, code[i], &dir);
-		cur_place = code[i];
-
-		encode_dir(dir.dir_1, &robot_control[control_index]);
-		control_index += dir.dir_1.mag;
-		encode_dir(dir.dir_2, &robot_control[control_index]);
-		control_index += dir.dir_2.mag;
-
-		robot_control[control_index] = 'A';
-		++control_index;
-		robot_control[control_index] = '\0';
-	}
-}
-
 /*
  * if row is > 0 dir is down otherwise up
  * if col is > 0 dir is right otherwise left
@@ -302,30 +278,6 @@ int get_robot_control_dir(char button_1, char button_2, directions *dir)
 	return can_invert;
 }
 
-//input is set to produse output on another robot
-void get_control_robot_input(char *output, char *input)
-{
-	int control_index = 0;
-
-	char cur_place = 'A';
-
-	for(int i = 0; output[i] != '\0'; ++i){
-		directions dir;
-
-		get_robot_control_dir(cur_place, output[i], &dir);
-		cur_place = output[i];
-
-		encode_dir(dir.dir_1, &input[control_index]);
-		control_index += dir.dir_1.mag;
-		encode_dir(dir.dir_2, &input[control_index]);
-		control_index += dir.dir_2.mag;
-
-		input[control_index] = 'A';
-		++control_index;
-		input[control_index] = '\0';
-	}
-}
-
 int main(void)
 {
 	char *input_line = NULL;
@@ -336,13 +288,6 @@ int main(void)
 	char robot_input_2[1000];
 
 	while(getline(&input_line, &lim, stdin) > 1){
-		get_key_pad_robot_control(input_line, keypad_inputs);
-		printf("%s\n", keypad_inputs);
-		get_control_robot_input(keypad_inputs, robot_input_1);
-		printf("%s\n", robot_input_1);
-		get_control_robot_input(robot_input_1, robot_input_2);
-
-		printf("%s\n\n", robot_input_2);
 	}
 
 	free(input_line);
