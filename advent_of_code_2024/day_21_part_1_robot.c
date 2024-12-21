@@ -142,12 +142,77 @@ cord get_keypad_dist(char button_1, char button_2)
 	return dir;
 }
 
+//null terminates output
+void encode_dir(int dir, int count, char *output)
+{
+	char val = dir;
+
+	for(int i = 0; i < count; ++i){
+		output[i] = val;
+	}
+
+	output[count] = '\0';
+}
+
+//sets robot_control to the button presses reqired to input code
+void get_key_pad_robot_control(char *code, char *robot_control)
+{
+	int control_index = 0;
+
+	char cur_place = 'A';
+
+	for(int i = 0; code[i] != '\n'; ++i){
+		cord dir = get_keypad_dist(cur_place, code[i]);
+		cur_place = code[i];
+
+		//to avoid going over empty space
+		if(dir.row > 0){
+			if(dir.col > 0){
+				encode_dir('>', dir.col, &robot_control[control_index]);
+				control_index += dir.col;
+
+				encode_dir('v', dir.row, &robot_control[control_index]);
+				control_index += dir.row;
+			}else{
+				encode_dir('<', abs(dir.col), &robot_control[control_index]);
+				control_index += abs(dir.col);
+
+				encode_dir('v', dir.row, &robot_control[control_index]);
+				control_index += dir.row;
+			}
+
+		}else{
+			if(dir.col > 0){
+				encode_dir('^', abs(dir.row), &robot_control[control_index]);
+				control_index += abs(dir.row);
+
+				encode_dir('>', dir.col, &robot_control[control_index]);
+				control_index += dir.col;
+			}else{
+				encode_dir('^', abs(dir.row), &robot_control[control_index]);
+				control_index += abs(dir.row);
+
+				encode_dir('<', abs(dir.col), &robot_control[control_index]);
+				control_index += abs(dir.col);
+			}
+
+		}
+
+		robot_control[control_index] = 'A';
+		++control_index;
+		robot_control[control_index] = '\0';
+	}
+}
+
 int main(void)
 {
 	char *input_line = NULL;
 	size_t lim = 0;
 
+	char keypad_inputs[1000];
+
 	while(getline(&input_line, &lim, stdin) > 1){
+		get_key_pad_robot_control(input_line, keypad_inputs);
 	}
 
 	free(input_line);
