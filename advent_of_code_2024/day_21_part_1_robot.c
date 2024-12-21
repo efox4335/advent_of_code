@@ -34,6 +34,7 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct{
 	int row;
@@ -278,17 +279,144 @@ int get_robot_control_dir(char button_1, char button_2, directions *dir)
 	return can_invert;
 }
 
+
+/*
+ * sets starting point to 'A'
+ * sets input to the shortest string that produses output with num robots
+ * returns the length of input
+*/
+int get_shortest_input_recur(char *output, char *input, int num)
+{
+	if(num == 0){
+		strcpy(input, output);
+		return strlen(output);
+	}
+
+	char last_pos = 'A';
+	int input_len = 0;
+
+	for(int i = 0; output[i] != '\0'; ++i){
+		directions temp;
+		int can_inv = get_robot_control_dir(last_pos, output[i], &temp);
+		last_pos = output[i];
+
+		char or_1[1000];
+		char or_2[1000];
+
+		char temp_output[1000];
+		int temp_output_len = 0;
+
+		encode_dir(temp.dir_1, &temp_output[temp_output_len]);
+		temp_output_len += temp.dir_1.mag;
+		encode_dir(temp.dir_2, &temp_output[temp_output_len]);
+		temp_output_len += temp.dir_2.mag;
+		temp_output[temp_output_len] = 'A';
+		temp_output[temp_output_len + 1] = '\0';
+
+		int or_1_len = get_shortest_input_recur(temp_output, or_1, num - 1);
+
+		if(can_inv){
+			temp_output_len = 0;
+			encode_dir(temp.dir_2, &temp_output[temp_output_len]);
+			temp_output_len += temp.dir_2.mag;
+			encode_dir(temp.dir_1, &temp_output[temp_output_len]);
+			temp_output_len += temp.dir_1.mag;
+			temp_output[temp_output_len] = 'A';
+			temp_output[temp_output_len + 1] = '\0';
+
+			int or_2_len = get_shortest_input_recur(temp_output, or_2, num - 1);
+
+			if(or_2_len < or_1_len){
+				strcpy(&input[input_len], or_2);
+				input_len += or_2_len;
+			}else{
+				strcpy(&input[input_len], or_1);
+				input_len += or_1_len;
+			}
+		}else{
+			strcpy(&input[input_len], or_1);
+			input_len += or_1_len;
+		}
+	}
+
+	return input_len;
+}
+
+/*
+ * sets input to the shortest string that produses output with 3 robots
+ * returns the length of input
+*/
+int get_shortest_input(char *output, char *input)
+{
+	char last_pos = 'A';
+	int input_len = 0;
+
+	for(int i = 0; output[i] != '\n'; ++i){
+		directions temp;
+		int can_inv = get_keypad_dir(last_pos, output[i], &temp);
+		last_pos = output[i];
+
+		char or_1[1000];
+		char or_2[1000];
+
+		char temp_output[1000];
+		int temp_output_len = 0;
+
+		encode_dir(temp.dir_1, &temp_output[temp_output_len]);
+		temp_output_len += temp.dir_1.mag;
+		encode_dir(temp.dir_2, &temp_output[temp_output_len]);
+		temp_output_len += temp.dir_2.mag;
+		temp_output[temp_output_len] = 'A';
+		temp_output[temp_output_len + 1] = '\0';
+
+		int or_1_len = get_shortest_input_recur(temp_output, or_1, 2);
+
+		if(can_inv){
+			temp_output_len = 0;
+			encode_dir(temp.dir_2, &temp_output[temp_output_len]);
+			temp_output_len += temp.dir_2.mag;
+			encode_dir(temp.dir_1, &temp_output[temp_output_len]);
+			temp_output_len += temp.dir_1.mag;
+			temp_output[temp_output_len] = 'A';
+			temp_output[temp_output_len + 1] = '\0';
+
+			int or_2_len = get_shortest_input_recur(temp_output, or_2, 2);
+
+			if(or_2_len < or_1_len){
+				strcpy(&input[input_len], or_2);
+				input_len += or_2_len;
+			}else{
+				strcpy(&input[input_len], or_1);
+				input_len += or_1_len;
+			}
+		}else{
+			strcpy(&input[input_len], or_1);
+			input_len += or_1_len;
+		}
+	}
+
+	return input_len;
+}
+
 int main(void)
 {
 	char *input_line = NULL;
 	size_t lim = 0;
 
 	char keypad_inputs[1000];
-	char robot_input_1[1000];
-	char robot_input_2[1000];
+
+	long complex = 0;
 
 	while(getline(&input_line, &lim, stdin) > 1){
+		int len = get_shortest_input(input_line, keypad_inputs);
+		printf("%s %d\n", keypad_inputs, len);
+
+		char *temp_num = strtok(input_line, "A\n");
+
+		complex += (atoi(temp_num) * len);
 	}
+
+	printf("%ld\n", complex);
 
 	free(input_line);
 	return 0;
