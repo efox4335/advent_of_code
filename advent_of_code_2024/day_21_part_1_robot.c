@@ -40,6 +40,16 @@ typedef struct{
 	int col;
 }cord;
 
+typedef struct{
+	char dir;
+	int mag;
+}vector;
+
+typedef struct{
+	vector dir_1;
+	vector dir_2;
+}directions;
+
 /*
  * if row is > 0 dir is down otherwise up
  * if col is > 0 dir is right otherwise left
@@ -147,15 +157,15 @@ cord get_keypad_dist(char button_1, char button_2)
 }
 
 //null terminates output
-void encode_dir(int dir, int count, char *output)
+void encode_dir(vector enc, char *output)
 {
-	char val = dir;
+	char val = enc.dir;
 
-	for(int i = 0; i < count; ++i){
+	for(int i = 0; i < enc.mag; ++i){
 		output[i] = val;
 	}
 
-	output[count] = '\0';
+	output[enc.mag] = '\0';
 }
 
 //sets robot_control to the button presses reqired to input code
@@ -169,35 +179,52 @@ void get_key_pad_robot_control(char *code, char *robot_control)
 		cord dir = get_keypad_dist(cur_place, code[i]);
 		cur_place = code[i];
 
+		vector temp;
 		//to avoid going over empty space
 		if(dir.row > 0){
 			if(dir.col > 0){
-				encode_dir('>', dir.col, &robot_control[control_index]);
-				control_index += dir.col;
+				temp.dir = '>';
+				temp.mag = dir.col;
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('v', dir.row, &robot_control[control_index]);
-				control_index += dir.row;
+				temp.dir = 'v';
+				temp.mag = dir.row;
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 			}else{
-				encode_dir('<', abs(dir.col), &robot_control[control_index]);
-				control_index += abs(dir.col);
+				temp.dir = '<';
+				temp.mag = abs(dir.col);
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('v', dir.row, &robot_control[control_index]);
-				control_index += dir.row;
+				temp.dir = 'v';
+				temp.mag = dir.row;
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 			}
 
 		}else{
 			if(dir.col > 0){
-				encode_dir('^', abs(dir.row), &robot_control[control_index]);
-				control_index += abs(dir.row);
+				temp.dir = '^';
+				temp.mag = abs(dir.row);
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('>', dir.col, &robot_control[control_index]);
-				control_index += dir.col;
+				temp.dir = '>';
+				temp.mag = dir.col;
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 			}else{
-				encode_dir('^', abs(dir.row), &robot_control[control_index]);
-				control_index += abs(dir.row);
+				temp.dir = '^';
+				temp.mag = abs(dir.row);
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('<', abs(dir.col), &robot_control[control_index]);
-				control_index += abs(dir.col);
+				temp.dir = '<';
+				temp.mag = abs(dir.col);
+				encode_dir(temp, &robot_control[control_index]);
+				control_index += temp.mag;
 			}
 
 		}
@@ -283,35 +310,52 @@ void get_control_robot_input(char *output, char *input)
 		cord dir = get_robot_control_dir(cur_place, output[i]);
 		cur_place = output[i];
 
+		vector temp;
 		//to avoid going over empty space
 		if(dir.row > 0){
 			if(dir.col > 0){
-				encode_dir('v', dir.row, &input[control_index]);
-				control_index += dir.row;
+				temp.dir = 'v';
+				temp.mag = dir.row;
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('>', dir.col, &input[control_index]);
-				control_index += dir.col;
+				temp.dir = '>';
+				temp.mag = dir.col;
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 			}else{
-				encode_dir('v', dir.row, &input[control_index]);
-				control_index += dir.row;
+				temp.dir = 'v';
+				temp.mag = dir.row;
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('<', abs(dir.col), &input[control_index]);
-				control_index += abs(dir.col);
+				temp.dir = '<';
+				temp.mag = abs(dir.col);
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 			}
 
 		}else{
 			if(dir.col > 0){
-				encode_dir('>', dir.col, &input[control_index]);
-				control_index += dir.col;
+				temp.dir = '>';
+				temp.mag = dir.col;
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('^', abs(dir.row), &input[control_index]);
-				control_index += abs(dir.row);
+				temp.dir = '^';
+				temp.mag = abs(dir.row);
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 			}else{
-				encode_dir('<', abs(dir.col), &input[control_index]);
-				control_index += abs(dir.col);
+				temp.dir = '<';
+				temp.mag = abs(dir.col);
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 
-				encode_dir('^', abs(dir.row), &input[control_index]);
-				control_index += abs(dir.row);
+				temp.dir = '^';
+				temp.mag = abs(dir.row);
+				encode_dir(temp, &input[control_index]);
+				control_index += temp.mag;
 			}
 
 		}
