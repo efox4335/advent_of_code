@@ -218,15 +218,17 @@ void get_key_pad_robot_control(char *code, char *robot_control)
 /*
  * if row is > 0 dir is down otherwise up
  * if col is > 0 dir is right otherwise left
- * returns how to get from button_1 to button_2
+ * sets dit to how to get from button_1 to button_2
+ * returns weather dir can be inverted
 */
-cord get_robot_control_dir(char button_1, char button_2)
+int get_robot_control_dir(char button_1, char button_2, directions *dir)
 {
 	const cord UP = {0, 1};
 	const cord A = {0, 2};
 	const cord LEFT = {1, 0};
 	const cord DOWN = {1, 1};
 	const cord RIGHT = {1, 2};
+	const cord EMPTY = {0, 0};
 
 	cord button_1_loc;
 
@@ -274,9 +276,30 @@ cord get_robot_control_dir(char button_1, char button_2)
 		exit(1);
 	}
 
-	cord dir = {button_2_loc.row - button_1_loc.row, button_2_loc.col - button_1_loc.col};
+	//default set to be vertical
+	vector temp_dir_1 = {(button_2_loc.row > button_1_loc.row)? 'v' : '^', button_2_loc.row - button_1_loc.row};
 
-	return dir;
+	//defaule set to be horizontal
+	vector temp_dir_2 = {(button_2_loc.col > button_1_loc.col)? '>' : '<', button_2_loc.col - button_1_loc.col};
+
+	int can_invert = 1;
+
+	if(button_1_loc.row + temp_dir_1.mag == EMPTY.row && button_1_loc.col == EMPTY.col){
+		can_invert = 0;
+		vector swap_temp = temp_dir_1;
+		temp_dir_1 = temp_dir_2;
+		temp_dir_2 = swap_temp;
+	}else if(button_1_loc.row == EMPTY.row && button_1_loc.col + temp_dir_2.mag == EMPTY.col){
+		can_invert = 0;
+	}
+
+	temp_dir_1.mag = abs(temp_dir_1.mag);
+	temp_dir_2.mag = abs(temp_dir_2.mag);
+
+	dir->dir_1 = temp_dir_1;
+	dir->dir_2 = temp_dir_2;
+
+	return can_invert;
 }
 
 //input is set to produse output on another robot
@@ -287,58 +310,15 @@ void get_control_robot_input(char *output, char *input)
 	char cur_place = 'A';
 
 	for(int i = 0; output[i] != '\0'; ++i){
-		cord dir = get_robot_control_dir(cur_place, output[i]);
+		directions dir;
+
+		get_robot_control_dir(cur_place, output[i], &dir);
 		cur_place = output[i];
 
-		vector temp;
-		//to avoid going over empty space
-		if(dir.row > 0){
-			if(dir.col > 0){
-				temp.dir = 'v';
-				temp.mag = dir.row;
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-
-				temp.dir = '>';
-				temp.mag = dir.col;
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-			}else{
-				temp.dir = 'v';
-				temp.mag = dir.row;
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-
-				temp.dir = '<';
-				temp.mag = abs(dir.col);
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-			}
-
-		}else{
-			if(dir.col > 0){
-				temp.dir = '>';
-				temp.mag = dir.col;
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-
-				temp.dir = '^';
-				temp.mag = abs(dir.row);
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-			}else{
-				temp.dir = '<';
-				temp.mag = abs(dir.col);
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-
-				temp.dir = '^';
-				temp.mag = abs(dir.row);
-				encode_dir(temp, &input[control_index]);
-				control_index += temp.mag;
-			}
-
-		}
+		encode_dir(dir.dir_1, &input[control_index]);
+		control_index += dir.dir_1.mag;
+		encode_dir(dir.dir_2, &input[control_index]);
+		control_index += dir.dir_2.mag;
 
 		input[control_index] = 'A';
 		++control_index;
