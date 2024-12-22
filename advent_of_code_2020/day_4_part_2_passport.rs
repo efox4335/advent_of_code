@@ -108,7 +108,19 @@ fn main() {
                         }
                     }
                 }
-                "hcl" => cur_fields.hcl = true,
+                "hcl" => {
+                    let field = fields.peek().unwrap();
+                    if field.chars().count() == 7
+                        && field.chars().nth(0).unwrap() == '#'
+                        && field
+                            .chars()
+                            .filter(|s| "0123456789abcdef".contains(*s))
+                            .count()
+                            == 6
+                    {
+                        cur_fields.hcl = true;
+                    }
+                }
                 "ecl" => cur_fields.ecl = true,
                 "pid" => cur_fields.pid = true,
                 "cid" => cur_fields.cid = true,
