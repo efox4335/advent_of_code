@@ -65,36 +65,49 @@ fn main() {
         let mut cur_fields: Fields = Fields::default();
         let mut fields = passport.split([' ', ':']).into_iter().peekable();
         let mut cur_str = fields.next().unwrap();
-        while !cur_str.is_empty(){
-            match cur_str{
+        while !cur_str.is_empty() {
+            match cur_str {
                 "byr" => {
                     let field = fields.peek().unwrap();
-                    if field.chars().count() == 4{
+                    if field.chars().count() == 4 {
                         let num = field.parse::<i32>().unwrap();
-                        if num >= 1920 && num <= 2002{
+                        if num >= 1920 && num <= 2002 {
                             cur_fields.byr = true;
                         }
                     }
-                },
+                }
                 "iyr" => {
                     let field = fields.peek().unwrap();
-                    if field.chars().count() == 4{
+                    if field.chars().count() == 4 {
                         let num = field.parse::<i32>().unwrap();
-                        if num >= 2010 && num <= 2020{
+                        if num >= 2010 && num <= 2020 {
                             cur_fields.iyr = true;
                         }
                     }
-                },
+                }
                 "eyr" => {
                     let field = fields.peek().unwrap();
-                    if field.chars().count() == 4{
+                    if field.chars().count() == 4 {
                         let num = field.parse::<i32>().unwrap();
-                        if num >= 2020 && num <= 2030{
+                        if num >= 2020 && num <= 2030 {
                             cur_fields.eyr = true;
                         }
                     }
-                },
-                "hgt" => cur_fields.hgt = true,
+                }
+                "hgt" => {
+                    let field = fields.peek().unwrap();
+                    if field.contains("in") {
+                        let num = field.replace("in", "").parse::<i32>().unwrap();
+                        if num >= 59 && num <= 76 {
+                            cur_fields.hgt = true;
+                        }
+                    } else if field.contains("cm") {
+                        let num = field.replace("cm", "").parse::<i32>().unwrap();
+                        if num >= 150 && num <= 193 {
+                            cur_fields.hgt = true;
+                        }
+                    }
+                }
                 "hcl" => cur_fields.hcl = true,
                 "ecl" => cur_fields.ecl = true,
                 "pid" => cur_fields.pid = true,
@@ -105,7 +118,7 @@ fn main() {
             cur_str = fields.next().unwrap();
         }
 
-        if cur_fields.is_valid(){
+        if cur_fields.is_valid() {
             valid_pass_count += 1;
         }
     }
