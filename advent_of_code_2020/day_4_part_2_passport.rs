@@ -76,7 +76,15 @@ fn main() {
                         }
                     }
                 },
-                "iyr" => cur_fields.iyr = true,
+                "iyr" => {
+                    let field = fields.peek().unwrap();
+                    if field.chars().count() == 4{
+                        let num = field.parse::<i32>().unwrap();
+                        if num >= 2010 && num <= 2020{
+                            cur_fields.iyr = true;
+                        }
+                    }
+                },
                 "eyr" => cur_fields.eyr = true,
                 "hgt" => cur_fields.hgt = true,
                 "hcl" => cur_fields.hcl = true,
