@@ -77,7 +77,7 @@ fn main() {
             }
         }
 
-        if cur_fields.is_valid(){
+        if cur_fields.is_valid() {
             valid_pass_count += 1;
         }
     }
