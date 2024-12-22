@@ -121,7 +121,19 @@ fn main() {
                         cur_fields.hcl = true;
                     }
                 }
-                "ecl" => cur_fields.ecl = true,
+                "ecl" => {
+                    let field = fields.peek().unwrap();
+                    match *field {
+                        "amb" => cur_fields.ecl = true,
+                        "blu" => cur_fields.ecl = true,
+                        "brn" => cur_fields.ecl = true,
+                        "gry" => cur_fields.ecl = true,
+                        "grn" => cur_fields.ecl = true,
+                        "hzl" => cur_fields.ecl = true,
+                        "oth" => cur_fields.ecl = true,
+                        _ => (),
+                    }
+                }
                 "pid" => cur_fields.pid = true,
                 "cid" => cur_fields.cid = true,
                 _ => (),
