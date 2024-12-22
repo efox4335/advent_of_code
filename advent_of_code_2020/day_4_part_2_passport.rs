@@ -63,9 +63,19 @@ fn main() {
 
     for passport in passports {
         let mut cur_fields: Fields = Fields::default();
-        for fields in passport.split([' ', ':']) {
-            match fields {
-                "byr" => cur_fields.byr = true,
+        let mut fields = passport.split([' ', ':']).into_iter().peekable();
+        let mut cur_str = fields.next().unwrap();
+        while !cur_str.is_empty(){
+            match cur_str{
+                "byr" => {
+                    let field = fields.peek().unwrap();
+                    if field.chars().count() == 4{
+                        let num = field.parse::<i32>().unwrap();
+                        if num >= 1920 && num <= 2002{
+                            cur_fields.byr = true;
+                        }
+                    }
+                },
                 "iyr" => cur_fields.iyr = true,
                 "eyr" => cur_fields.eyr = true,
                 "hgt" => cur_fields.hgt = true,
@@ -75,6 +85,8 @@ fn main() {
                 "cid" => cur_fields.cid = true,
                 _ => (),
             }
+
+            cur_str = fields.next().unwrap();
         }
 
         if cur_fields.is_valid(){
