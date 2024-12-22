@@ -134,7 +134,14 @@ fn main() {
                         _ => (),
                     }
                 }
-                "pid" => cur_fields.pid = true,
+                "pid" => {
+                    let field = fields.peek().unwrap();
+                    if field.chars().count() == 9
+                        && field.chars().filter(|s| "0123456789".contains(*s)).count() == 9
+                    {
+                        cur_fields.pid = true;
+                    }
+                }
                 "cid" => cur_fields.cid = true,
                 _ => (),
             }
