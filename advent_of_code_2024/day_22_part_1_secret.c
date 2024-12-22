@@ -22,13 +22,19 @@ int main(void)
 	char *input_line = NULL;
 	size_t lim = 0;
 
+	long secret_num_sum = 0;
+
 	while(getline(&input_line, &lim, stdin) > 1){
 		long num = atol(input_line);
 
 		for(int i = 0; i < 2000; ++i){
 			num = get_next_num(num);
 		}
+
+		secret_num_sum += num;
 	}
+
+	printf("%ld\n", secret_num_sum);
 
 	free(input_line);
 	return 0;
