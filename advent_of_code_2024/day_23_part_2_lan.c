@@ -5,7 +5,7 @@
  * if there is no entry for that vertex is is assigned a nuber
  * edges will only be added to the adjacency matrix with [lower number vertex][higher number vertex] to avoid double counting
  *
- * find the largest connect component
+ * finding the largest compelete subgraph is np hard :(
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -62,19 +62,56 @@ void add_edge(edge cur_edge, char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT])
 	adj_matrix[cur_edge.ver_1][cur_edge.ver_2] = EDGE;
 }
 
-//returns size of connect component
-int mark_componets(const int cur_ver, const char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT], char *comp_arr, int num)
+int largest_compelete_subgraph(const char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT], int *subgraph, int *ver_arr, int ver_count, int cur_subgraph_size, int cur_largest)
 {
-	comp_arr[cur_ver] = num;
-	int count = 1;
+	if(ver_count < cur_largest){
+		return cur_subgraph_size;
+	}
 
-	for(int i = 0; i < MAX_VER_COUNT; ++i){
-		if((adj_matrix[cur_ver][i] == EDGE || adj_matrix[i][cur_ver] == EDGE) && comp_arr[i] != num){
-			count += mark_componets(i, adj_matrix, comp_arr, num);
+	if(ver_count == 0){
+		return cur_subgraph_size;
+	}
+
+	int *nabs = malloc((ver_count - 1) * sizeof(int));
+	int largest = 0;
+
+	int *cur_subgraph = malloc(MAX_VER_COUNT * sizeof(int));
+
+	for(int i = 0; i < ver_count; ++i){
+		if(ver_count == 520){
+			printf("here\n");
+		}
+
+		int nab_count = 0;
+
+		for(int j = 0; j < ver_count; ++j){
+			if(j == i){
+				continue;
+			}
+
+			if(adj_matrix[ver_arr[i]][ver_arr[j]] == EDGE || adj_matrix[ver_arr[j]][ver_arr[i]] == EDGE){
+				nabs[nab_count] = ver_arr[j];
+
+				++nab_count;
+			}
+		}
+
+		cur_subgraph[cur_subgraph_size] = ver_arr[i];
+
+		int temp = largest_compelete_subgraph(adj_matrix, cur_subgraph, nabs, nab_count, cur_subgraph_size + 1, largest);
+
+		if(temp > largest){
+			largest = temp;
+			for(int j = 0; j < temp; ++j){
+				subgraph[j] = cur_subgraph[j];
+			}
 		}
 	}
 
-	return count;
+	free(nabs);
+	free(cur_subgraph);
+
+	return largest;
 }
 
 int main(void)
@@ -123,13 +160,25 @@ int main(void)
 		add_edge(temp, adj_matrix);
 	}
 
-	char seen[MAX_VER_COUNT];
+	int largest_comp_size = 0;
 
-	for(int i = 0; i < MAX_VER_COUNT; ++i){
-		seen[i] = 0;
+	int ver_arr[MAX_VER_COUNT];
+	int ver_num = 0;
+
+	for(int i = 0; i < 26; ++i){
+		for(int j = 0; j < 26; ++j){
+			if(ver_lookup[i][j] != -1){
+				ver_arr[ver_num] = ver_lookup[i][j];
+				++ver_num;
+			}
+		}
 	}
 
+	int subgraph[MAX_VER_COUNT];
 
+	largest_comp_size = largest_compelete_subgraph(adj_matrix, subgraph, ver_arr, ver_num, 0, 0);
+
+	printf("%d\n", largest_comp_size);
 
 	free(input_line);
 	return 0;
