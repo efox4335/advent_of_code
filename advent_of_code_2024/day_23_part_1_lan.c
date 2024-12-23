@@ -49,6 +49,18 @@ int find_ver(const char *ver, int ver_lookup[26][26])
 	return ver_lookup[f_letter][s_letter];
 }
 
+//adds edge only in form [lowest][highest] will swap if needed
+void add_edge(edge cur_edge, char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT])
+{
+	if(cur_edge.ver_1 > cur_edge.ver_2){
+		int temp = cur_edge.ver_1;
+		cur_edge.ver_1 = cur_edge.ver_2;
+		cur_edge.ver_2 = temp;
+	}
+
+	adj_matrix[cur_edge.ver_1][cur_edge.ver_2] = EDGE;
+}
+
 int main(void)
 {
 	char *input_line = NULL;
@@ -79,6 +91,9 @@ int main(void)
 
 		ver_count += add_ver(ver_1, ver_lookup, ver_count);
 		ver_count += add_ver(ver_2, ver_lookup, ver_count);
+
+		edge temp = {find_ver(ver_1, ver_lookup), find_ver(ver_2, ver_lookup)};
+		add_edge(temp, adj_matrix);
 	}
 
 	free(input_line);
