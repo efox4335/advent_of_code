@@ -96,6 +96,41 @@ int main(void)
 		add_edge(temp, adj_matrix);
 	}
 
+	int cyc_count = 0;
+
+	char seen[MAX_VER_COUNT];
+
+	for(int i = 0; i < MAX_VER_COUNT; ++i){
+		seen[i] = 0;
+	}
+
+	for(int i = 0; i < 26; ++i){
+		int cur_ver = ver_lookup['t' - 'a'][i];
+
+		if(cur_ver == -1){
+			continue;
+		}
+
+		for(int j = 0; j < MAX_VER_COUNT; ++j){
+			if(adj_matrix[cur_ver][j] == NEDGE && adj_matrix[j][cur_ver] == NEDGE){
+				continue;
+			}
+			for(int k = j + 1; k < MAX_VER_COUNT; ++k){
+				if(adj_matrix[cur_ver][k] == NEDGE && adj_matrix[k][cur_ver] == NEDGE){
+					continue;
+				}
+
+				if(adj_matrix[j][k] == EDGE && seen[k] == 0 && seen[j] == 0){
+					++cyc_count;
+				}
+			}
+		}
+
+		seen[cur_ver] = 1;
+	}
+
+	printf("%d\n", cyc_count);
+
 	free(input_line);
 	return 0;
 }
