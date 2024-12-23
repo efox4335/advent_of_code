@@ -64,7 +64,7 @@ void add_edge(edge cur_edge, char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT])
 
 int largest_compelete_subgraph(const char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT], int *subgraph, int *ver_arr, int ver_count, int cur_subgraph_size, int cur_largest)
 {
-	if(ver_count < cur_largest){
+	if(ver_count + cur_subgraph_size < cur_largest){
 		return cur_subgraph_size;
 	}
 
@@ -76,19 +76,14 @@ int largest_compelete_subgraph(const char adj_matrix[MAX_VER_COUNT][MAX_VER_COUN
 	int largest = 0;
 
 	int *cur_subgraph = malloc(MAX_VER_COUNT * sizeof(int));
+	for(int i = 0; i < cur_subgraph_size; ++i){
+		cur_subgraph[i] = subgraph[i];
+	}
 
 	for(int i = 0; i < ver_count; ++i){
-		if(ver_count == 520){
-			printf("here\n");
-		}
-
 		int nab_count = 0;
 
-		for(int j = 0; j < ver_count; ++j){
-			if(j == i){
-				continue;
-			}
-
+		for(int j = i + 1; j < ver_count; ++j){
 			if(adj_matrix[ver_arr[i]][ver_arr[j]] == EDGE || adj_matrix[ver_arr[j]][ver_arr[i]] == EDGE){
 				nabs[nab_count] = ver_arr[j];
 
@@ -177,6 +172,10 @@ int main(void)
 	int subgraph[MAX_VER_COUNT];
 
 	largest_comp_size = largest_compelete_subgraph(adj_matrix, subgraph, ver_arr, ver_num, 0, 0);
+
+	for(int i = 0; i < largest_comp_size; ++i){
+		printf("%s,", num_to_ver[subgraph[i]]);
+	}
 
 	printf("%d\n", largest_comp_size);
 
