@@ -109,6 +109,18 @@ int largest_compelete_subgraph(const char adj_matrix[MAX_VER_COUNT][MAX_VER_COUN
 	return largest;
 }
 
+int alpha_cmp(const void *a, const void *b)
+{
+	char *str_1 = ((char *) a);
+	char *str_2 = ((char *) b);
+
+	if(str_1[0] == str_2[0]){
+		return str_1[1] > str_2[1];
+	}
+
+	return str_1[0] > str_2[0];
+}
+
 int main(void)
 {
 	char *input_line = NULL;
@@ -173,11 +185,18 @@ int main(void)
 
 	largest_comp_size = largest_compelete_subgraph(adj_matrix, subgraph, ver_arr, ver_num, 0, 0);
 
+	char pass[100];
+	pass[0] = '\0';
+
 	for(int i = 0; i < largest_comp_size; ++i){
-		printf("%s,", num_to_ver[subgraph[i]]);
+		strcat(pass, num_to_ver[subgraph[i]]);
+		strcat(pass, ",");
 	}
 
-	printf("%d\n", largest_comp_size);
+	qsort(pass, largest_comp_size, 3, alpha_cmp);
+	pass[(largest_comp_size * 3) - 1] = '\0';
+
+	printf("%s\n", pass);
 
 	free(input_line);
 	return 0;
