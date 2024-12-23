@@ -8,13 +8,77 @@
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+enum{EDGE = 1, NEDGE = 0};
+enum{MAX_VER_COUNT = 26 * 26};
+
+typedef struct{
+	int ver_1;
+	int ver_2;
+}edge;
+
+//returns 1 if new edge was added 0 if edge already existed
+int add_ver(const char *ver, int ver_lookup[26][26], const int edge_num)
+{
+	const int f_letter = ver[0] - 'a';
+	const int s_letter = ver[1] - 'a';
+
+	if(ver_lookup[f_letter][s_letter] == -1){
+		ver_lookup[f_letter][s_letter] = edge_num;
+
+		return 1;
+	}
+
+	return 0;
+}
+
+
+//returns number of vertex exits program if called on edge that does not exist
+int find_ver(const char *ver, int ver_lookup[26][26])
+{
+	const int f_letter = ver[0] - 'a';
+	const int s_letter = ver[1] - 'a';
+
+	if(ver_lookup[f_letter][s_letter] == -1){
+		printf("no vertex for %s\n", ver);
+
+		exit(0);
+	}
+
+	return ver_lookup[f_letter][s_letter];
+}
 
 int main(void)
 {
 	char *input_line = NULL;
 	size_t lim = 0;
 
+	int ver_lookup[26][26];
+
+	for(int i = 0; i < 26; ++i){
+		for(int j = 0; j < 26; ++j){
+			ver_lookup[i][j] = -1;
+		}
+	}
+
+	char adj_matrix[MAX_VER_COUNT][MAX_VER_COUNT];
+
+	for(int i = 0; i < MAX_VER_COUNT; ++i){
+		for(int j = 0; j < MAX_VER_COUNT; ++j){
+			adj_matrix[i][j] = NEDGE;
+		}
+	}
+
+	char delim[] = " \n-";
+	int ver_count = 0;
+
 	while(getline(&input_line, &lim, stdin) > 1){
+		const char *ver_1 = strtok(input_line, delim);
+		const char *ver_2 = strtok(NULL, delim);
+
+		ver_count += add_ver(ver_1, ver_lookup, ver_count);
+		ver_count += add_ver(ver_2, ver_lookup, ver_count);
 	}
 
 	free(input_line);
