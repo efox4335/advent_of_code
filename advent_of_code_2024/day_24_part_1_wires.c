@@ -18,6 +18,39 @@ typedef struct{
 	int op;
 }gate;
 
+int get_state(int wire, gate *gates, int *wire_states){
+	if(wire_states[wire] == NO_WIRE){
+		printf("error wire dependency failed\n");
+		exit(1);
+	}
+
+	if(wire_states[wire] != NOT_SET){
+		return wire_states[wire];
+	}
+
+	int state_1 = get_state(gates[wire].in_1, gates, wire_states);
+	int state_2 = get_state(gates[wire].in_2, gates, wire_states);
+
+	int cur_state = -1;
+	switch(gates[wire].op){
+	case XOR:
+		cur_state = state_1 ^ state_2;
+		break;
+	case OR:
+		cur_state = state_1 | state_2;
+		break;
+	case AND:
+		cur_state = state_1 & state_2;
+		break;
+	default:
+		printf("error bad state %d for wire %d\n", gates[wire].op, wire);
+		exit(1);
+	}
+
+	wire_states[wire] = cur_state;
+	return cur_state;
+}
+
 int main(void)
 {
 	int wire_states[MAX_WIRE_COUNT];
@@ -119,6 +152,28 @@ int main(void)
 			gate_arr[wire_3].op = op;
 		}
 	}
+
+	unsigned long output = 0;
+
+	for(int i = 0; i < 10; ++i){
+		for(int j = 0; j < 10; ++j){
+			char wire[3];
+			wire[0] = 'z';
+			wire[1] = i + '0';
+			wire[2] = j + '0';
+
+			int wire_id = 0;
+
+			if(edsa_htable_read(wire_ids, wire, &wire_id) == EDSA_HTABLE_READ_NO_ENTRY){
+				goto end_loop;
+			}
+
+			output += ((long) get_state(wire_id, gate_arr, wire_states)) << ((i * 10) + j);
+		}
+	}
+end_loop:
+
+	printf("%lu\n", output);
 
 	edsa_htable_free(wire_ids);
 	free(input_line);
