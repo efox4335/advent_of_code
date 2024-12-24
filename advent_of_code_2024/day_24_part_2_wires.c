@@ -120,6 +120,17 @@ void find_bad(int wire_id, gate *gates, int bad_wire[MAX_WIRE_COUNT][2], char id
 			break;
 		}
 
+		//in case only one is broken
+		if(in_1_op == XOR && in_2_op == XOR){
+			if(gates[gates[in_1_id].in_1].op == NOP && gates[gates[in_2_id].in_1].op != NOP){
+				bad_wire[in_2_id][1] += 1;
+				break;
+			}else if(gates[gates[in_1_id].in_1].op != NOP && gates[gates[in_2_id].in_1].op == NOP){
+				bad_wire[in_1_id][1] += 1;
+				break;
+			}
+		}
+
 		//if it breaks the or xor input rule
 		if(in_1_op == in_2_op){
 			bad_wire[in_1_id][1] += 1;
@@ -155,7 +166,7 @@ void find_bad(int wire_id, gate *gates, int bad_wire[MAX_WIRE_COUNT][2], char id
 			if(in_1_bit_num != level && level > 1){
 				bad_wire[wire_id][1] += 1;
 				break;
-			}else if(level == 1 && in_1_bit_num != 0){
+			}else if(level == 1 && in_1_bit_num > 1){
 				bad_wire[wire_id][1] += 1;
 				break;
 			}
@@ -323,12 +334,17 @@ int main(void)
 				goto end_loop;
 			}
 
-			find_bad(wire_id, gate_arr, bad_wire, id_to_name, (i * 10) + j);
+
 			if(gate_arr[wire_id].op != XOR && (i * 10) + j != 45){
 				bad_wire[wire_id][1] += 1;
-			}
-
-			//print_cir(wire_id, id_to_name, gate_arr, 0);
+				if(gate_arr[wire_id].op == OR){
+					find_bad(wire_id, gate_arr, bad_wire, id_to_name, (i * 10) + j + 1);
+				}else{
+					find_bad(wire_id, gate_arr, bad_wire, id_to_name, (i * 10) + j);
+				}
+			}else{
+				find_bad(wire_id, gate_arr, bad_wire, id_to_name, (i * 10) + j);
+			}//print_cir(wire_id, id_to_name, gate_arr, 0);
 		}
 	}
 end_loop:
