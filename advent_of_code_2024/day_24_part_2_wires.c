@@ -5,6 +5,29 @@
  *
  * print circut digram
  * through testing no wires are compeletly cut out from main processing
+ *
+ * the addition works by for each bit xor the xor of the 2 input bits with weather previous bits generated a carry
+ *
+ * the rules for checking for carry bits are as follows
+ * or
+ * 	and (weather the 2 previous bits will generate a carry)
+ * 		2 previous bits
+ * 	and (weather the 2 previous bits + all bits before it would generate a carry)
+ * 		or (weather the 2 bits before the previous bits generate a carry)
+ * 		xor (if the 2 previous bits do not generate a carry)
+ * 			2 previous bits
+ *
+ * this recursively goes till the bits before the 2 previous bits are the 0 bit then it takes the form
+ * or
+ * 	and
+ * 		2 previous bits
+ * 	and
+ * 		xor
+ * 			2 previous bits
+ * 		and
+ * 			2 bits before the previous bits
+ *
+ * if a wire leads to the wrong place then it will always break the pattern so find the eight wires that are always out of place
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,39 +43,6 @@ typedef struct{
 	int in_2;
 	int op;
 }gate;
-
-int get_state(int wire, gate *gates, int *wire_states){
-	if(wire_states[wire] == NO_WIRE){
-		printf("error wire dependency failed\n");
-		exit(1);
-	}
-
-	if(wire_states[wire] != NOT_SET){
-		return wire_states[wire];
-	}
-
-	int state_1 = get_state(gates[wire].in_1, gates, wire_states);
-	int state_2 = get_state(gates[wire].in_2, gates, wire_states);
-
-	int cur_state = -1;
-	switch(gates[wire].op){
-	case XOR:
-		cur_state = state_1 ^ state_2;
-		break;
-	case OR:
-		cur_state = state_1 | state_2;
-		break;
-	case AND:
-		cur_state = state_1 & state_2;
-		break;
-	default:
-		printf("error bad state %d for wire %d\n", gates[wire].op, wire);
-		exit(1);
-	}
-
-	wire_states[wire] = cur_state;
-	return cur_state;
-}
 
 //prints all wires and ops wire_id depends on indents based on how many levels deep it is
 void print_cir(int wire_id, char wire_names[MAX_WIRE_COUNT][4], gate *gates, int level)
@@ -91,12 +81,6 @@ void print_cir(int wire_id, char wire_names[MAX_WIRE_COUNT][4], gate *gates, int
 
 int main(void)
 {
-	int wire_states[MAX_WIRE_COUNT];
-
-	for(int i = 0; i < MAX_WIRE_COUNT; ++i){
-		wire_states[i] = NO_WIRE;
-	}
-
 	edsa_htable *wire_ids = NULL;
 
 	edsa_htable_init(&wire_ids, sizeof(char) * 3, sizeof(int), 1000);
@@ -136,10 +120,6 @@ int main(void)
 
 			strcpy(id_to_name[wire_count], wire_name);
 
-			char *wire_state = strtok(NULL, ini_delim);
-
-			wire_states[wire_count] = atoi(wire_state);
-
 			++wire_count;
 		}else{
 			char *temp = strtok(input_line, gates_delim);
@@ -150,8 +130,6 @@ int main(void)
 				wire_1 = wire_count;
 
 				strcpy(id_to_name[wire_count], temp);
-
-				wire_states[wire_1] = NOT_SET;
 
 				++wire_count;
 			}
@@ -183,8 +161,6 @@ int main(void)
 
 				strcpy(id_to_name[wire_count], temp);
 
-				wire_states[wire_2] = NOT_SET;
-
 				++wire_count;
 			}
 
@@ -197,8 +173,6 @@ int main(void)
 
 				strcpy(id_to_name[wire_count], temp);
 
-				wire_states[wire_3] = NOT_SET;
-
 				++wire_count;
 			}
 
@@ -207,8 +181,6 @@ int main(void)
 			gate_arr[wire_3].op = op;
 		}
 	}
-
-	unsigned long output = 0;
 
 	for(int i = 0; i < 10; ++i){
 		for(int j = 0; j < 10; ++j){
@@ -224,19 +196,9 @@ int main(void)
 			}
 
 			print_cir(wire_id, id_to_name, gate_arr, 0);
-
-			output += ((long) get_state(wire_id, gate_arr, wire_states)) << ((i * 10) + j);
 		}
 	}
 end_loop:
-
-	printf("%lu\n", output);
-
-	for(int i = 0; i < wire_count; ++i){
-		if(wire_states[i] == NOT_SET){
-			print_cir(i, id_to_name, gate_arr, 0);
-		}
-	}
 
 	edsa_htable_free(wire_ids);
 	free(input_line);
