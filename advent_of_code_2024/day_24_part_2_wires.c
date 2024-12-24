@@ -36,7 +36,7 @@
 
 enum{NOT_SET = -1, NO_WIRE = -2};
 enum{MAX_WIRE_COUNT = 1000};
-enum{XOR, OR, AND};
+enum{XOR, OR, AND, NOP};
 
 typedef struct{
 	int in_1;
@@ -79,6 +79,122 @@ void print_cir(int wire_id, char wire_names[MAX_WIRE_COUNT][4], gate *gates, int
 	print_cir(gates[wire_id].in_2, wire_names, gates, level + 1);
 }
 
+/*
+ * marks bad_wire for seen and when a circuit breaks the pattern
+ * when a bad wire is found both it's inputs will be marked as bad
+ * does not know what came before it in logic
+*/
+void find_bad(int wire_id, gate *gates, int bad_wire[MAX_WIRE_COUNT][2], char id_to_name[MAX_WIRE_COUNT][4], int level)
+{
+	if(gates[wire_id].op == NOP){
+		return;
+	}
+
+	bad_wire[wire_id][0] += 1;
+
+	const int in_1_id = gates[wire_id].in_1;
+	const int in_2_id = gates[wire_id].in_2;
+
+	const int in_1_op = gates[gates[wire_id].in_1].op;
+	const int in_2_op = gates[gates[wire_id].in_2].op;
+
+	int in_1_bit_num = (id_to_name[in_1_id][0] == 'x' || id_to_name[in_1_id][0] == 'y')? atoi(&id_to_name[in_1_id][1]) : -1;
+	int in_2_bit_num = (id_to_name[in_2_id][0] == 'x' || id_to_name[in_2_id][0] == 'y')? atoi(&id_to_name[in_2_id][1]) : -1;
+
+	switch(gates[wire_id].op){
+	case XOR:
+		//if one is nop and the other is not
+		if(in_1_op != in_2_op && (in_1_op == NOP || in_2_op == NOP)){
+			bad_wire[in_1_id][1] += 1;
+			bad_wire[in_2_id][1] += 1;
+			return;
+		}
+
+		//if both are nop
+		if(in_1_op == NOP && in_2_op == NOP){
+			//if it is at the wrong level
+			if(in_1_bit_num != level){
+				bad_wire[wire_id][1] += 1;
+			}
+
+			break;
+		}
+
+		//if it breaks the or xor input rule
+		if(in_1_op == in_2_op){
+			bad_wire[in_1_id][1] += 1;
+			bad_wire[in_2_id][1] += 1;
+
+			break;
+		}
+
+		//if the inputs are of the wrong gate type
+		if(in_1_op == AND){
+			bad_wire[in_1_id][1] += 1;
+		}
+
+		if(in_2_op == AND){
+			bad_wire[in_2_id][1] += 1;
+		}
+
+		break;
+	case OR:
+		if(in_1_op != AND){
+			bad_wire[in_1_id][1] += 1;
+		}
+
+		if(in_2_op != AND){
+			bad_wire[in_2_id][1] += 1;
+		}
+
+		--level;
+
+		break;
+	case AND:
+		if(in_1_op == NOP && in_2_op == NOP){
+			if(in_1_bit_num != level && level > 1){
+				bad_wire[wire_id][1] += 1;
+				break;
+			}else if(level == 1 && in_1_bit_num != 0){
+				bad_wire[wire_id][1] += 1;
+				break;
+			}
+
+			break;
+		}
+
+		if(in_1_op == in_2_op){
+			bad_wire[in_1_id][1] += 1;
+			bad_wire[in_2_id][1] += 1;
+
+			break;
+		}
+
+		if(level == 1){
+			if(in_1_op == OR){
+				bad_wire[in_1_id][1] += 1;
+			}
+
+			if(in_2_op == OR){
+				bad_wire[in_2_id][1] += 1;
+			}
+		}else{
+			if(in_1_op == AND){
+				bad_wire[in_1_id][1] += 1;
+			}
+
+			if(in_2_op == AND){
+				bad_wire[in_2_id][1] += 1;
+			}
+		}
+
+		break;
+	}
+
+	find_bad(in_1_id, gates, bad_wire, id_to_name, level);
+	find_bad(in_2_id, gates, bad_wire, id_to_name, level);
+}
+
 int main(void)
 {
 	edsa_htable *wire_ids = NULL;
@@ -98,6 +214,10 @@ int main(void)
 
 	//indexed by output wire id
 	gate gate_arr[MAX_WIRE_COUNT];
+
+	for(int i = 0; i < MAX_WIRE_COUNT; ++i){
+		gate_arr[i].op = NOP;
+	}
 
 	char id_to_name[MAX_WIRE_COUNT][4];
 
@@ -182,6 +302,14 @@ int main(void)
 		}
 	}
 
+	//bad_wire[id][0] will be the amount of times the wire is seen and bad_wire[id][1] will be the amount of times it breaks the pattern
+	int bad_wire[MAX_WIRE_COUNT][2];
+
+	for(int i = 0; i < MAX_WIRE_COUNT; ++i){
+		bad_wire[i][0] = 0;
+		bad_wire[i][1] = 0;
+	}
+
 	for(int i = 0; i < 10; ++i){
 		for(int j = 0; j < 10; ++j){
 			char wire[3];
@@ -195,10 +323,23 @@ int main(void)
 				goto end_loop;
 			}
 
-			print_cir(wire_id, id_to_name, gate_arr, 0);
+			find_bad(wire_id, gate_arr, bad_wire, id_to_name, (i * 10) + j);
+			if(gate_arr[wire_id].op != XOR && (i * 10) + j != 45){
+				bad_wire[wire_id][1] += 1;
+			}
+
+			//print_cir(wire_id, id_to_name, gate_arr, 0);
 		}
 	}
 end_loop:
+
+	for(int i = 0; i < MAX_WIRE_COUNT; ++i){
+		if(bad_wire[i][0] > 0){
+			if(bad_wire[i][0] == bad_wire[i][1]){
+				printf("%s %d %d\n", id_to_name[i], bad_wire[i][0], bad_wire[i][1]);
+			}
+		}
+	}
 
 	edsa_htable_free(wire_ids);
 	free(input_line);
