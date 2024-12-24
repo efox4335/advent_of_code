@@ -79,6 +79,18 @@ void print_cir(int wire_id, char wire_names[MAX_WIRE_COUNT][4], gate *gates, int
 	print_cir(gates[wire_id].in_2, wire_names, gates, level + 1);
 }
 
+int alpha_cmp(const void *a, const void *b)
+{
+	char *str_1 = ((char *) a);
+	char *str_2 = ((char *) b);
+
+	//convert from base ascii
+	int num_1 = str_1[0] * 128 * 128 + str_1[1] * 128 + str_1[2];
+	int num_2 = str_2[0] * 128 * 128 + str_2[1] * 128 + str_2[2];
+
+	return num_1 > num_2;
+}
+
 /*
  * marks bad_wire for seen and when a circuit breaks the pattern
  * when a bad wire is found both it's inputs will be marked as bad
@@ -349,13 +361,22 @@ int main(void)
 	}
 end_loop:
 
+	char bad_gates[100];
+	bad_gates[0] = '\0';
+
 	for(int i = 0; i < MAX_WIRE_COUNT; ++i){
-		if(bad_wire[i][0] > 0){
-			if(bad_wire[i][0] == bad_wire[i][1]){
-				printf("%s %d %d\n", id_to_name[i], bad_wire[i][0], bad_wire[i][1]);
-			}
+		if(bad_wire[i][0] != 0 && bad_wire[i][0] == bad_wire[i][1]){
+			strcat(bad_gates, id_to_name[i]);
+			strcat(bad_gates, ",");
 		}
 	}
+
+	qsort(bad_gates, 8, 4, alpha_cmp);
+
+	//erase last comma
+	bad_gates[8 * 4 - 1] = '\0';
+
+	printf("%s\n", bad_gates);
 
 	edsa_htable_free(wire_ids);
 	free(input_line);
