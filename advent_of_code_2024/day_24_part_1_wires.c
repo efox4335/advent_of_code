@@ -10,6 +10,13 @@
 
 enum{NOT_SET = -1, NO_WIRE = -2};
 enum{MAX_WIRE_COUNT = 1000};
+enum{XOR, OR, AND};
+
+typedef struct{
+	int in_1;
+	int in_2;
+	int op;
+}gate;
 
 int main(void)
 {
@@ -32,6 +39,10 @@ int main(void)
 	int wire_count = 0;
 
 	char ini_delim[] = " :\n";
+	char gates_delim[] = " ->\n";
+
+	//indexed by output wire id
+	gate gate_arr[MAX_WIRE_COUNT];
 
 	while(getline(&input_line, &lim, stdin) > 0){
 		if(input_line[0] == '\n'){
@@ -49,7 +60,63 @@ int main(void)
 
 			++wire_count;
 		}else{
+			char *temp = strtok(input_line, gates_delim);
+			int wire_1;
 
+			if(edsa_htable_read(wire_ids, temp, &wire_1) == EDSA_HTABLE_READ_NO_ENTRY){
+				edsa_htable_ins(wire_ids, temp, &wire_count);
+				wire_1 = wire_count;
+
+				wire_states[wire_1] = NOT_SET;
+
+				++wire_count;
+			}
+
+			temp = strtok(NULL, gates_delim);
+			int op;
+
+			switch(temp[0]){
+			case 'X':
+				op = XOR;
+				break;
+			case 'O':
+				op = OR;
+				break;
+			case 'A':
+				op = AND;
+				break;
+			default:
+				printf("error bad op %s\n", temp);
+				return 1;
+			}
+
+			temp = strtok(NULL, gates_delim);
+			int wire_2;
+
+			if(edsa_htable_read(wire_ids, temp, &wire_2) == EDSA_HTABLE_READ_NO_ENTRY){
+				edsa_htable_ins(wire_ids, temp, &wire_count);
+				wire_2 = wire_count;
+
+				wire_states[wire_2] = NOT_SET;
+
+				++wire_count;
+			}
+
+			temp = strtok(NULL, gates_delim);
+			int wire_3;
+
+			if(edsa_htable_read(wire_ids, temp, &wire_3) == EDSA_HTABLE_READ_NO_ENTRY){
+				edsa_htable_ins(wire_ids, temp, &wire_count);
+				wire_3 = wire_count;
+
+				wire_states[wire_3] = NOT_SET;
+
+				++wire_count;
+			}
+
+			gate_arr[wire_3].in_1 = wire_1;
+			gate_arr[wire_3].in_2 = wire_2;
+			gate_arr[wire_3].op = op;
 		}
 	}
 
