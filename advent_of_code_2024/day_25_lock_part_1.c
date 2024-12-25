@@ -6,10 +6,72 @@
 
 int main(void)
 {
+	enum{LOCK, KEY, NONE};
+
 	char *input_line = NULL;
 	size_t lim = 0;
 
+	int lock_arr[100][5];
+	int lock_count = 0;
+
+	int key_arr[100][5];
+	int key_count = 0;
+
+	int part = NONE;
+
 	while(getline(&input_line, &lim, stdin) > 0){
+		if(input_line[0] == '\n'){
+			if(part == LOCK){
+				++lock_count;
+			}else{
+				++key_count;
+			}
+
+			part = NONE;
+			continue;
+		}
+
+		switch(part){
+		case NONE:
+			if(input_line[0] == '#'){
+				for(int i = 0; i < 5; ++i){
+					lock_arr[lock_count][i] = 0;
+				}
+
+				part = LOCK;
+				goto lock_part;
+			}else{
+				for(int i = 0; i < 5; ++i){
+					key_arr[key_count][i] = 0;
+				}
+				part = KEY;
+				goto key_part;
+			}
+		case KEY:
+		key_part:
+			for(int i = 0; i < 5; ++i){
+				if(input_line[i] == '#'){
+					key_arr[key_count][i] += 1;
+				}
+			}
+
+			break;
+		case LOCK:
+		lock_part:
+			for(int i = 0; i < 5; ++i){
+				if(input_line[i] == '#'){
+					lock_arr[lock_count][i] += 1;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if(part == LOCK){
+		++lock_count;
+	}else{
+		++key_count;
 	}
 
 	free(input_line);
