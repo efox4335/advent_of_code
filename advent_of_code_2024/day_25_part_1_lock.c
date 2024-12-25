@@ -11,10 +11,10 @@ int main(void)
 	char *input_line = NULL;
 	size_t lim = 0;
 
-	int lock_arr[100][5];
+	int lock_arr[1000][5];
 	int lock_count = 0;
 
-	int key_arr[100][5];
+	int key_arr[1000][5];
 	int key_count = 0;
 
 	int part = NONE;
@@ -73,6 +73,27 @@ int main(void)
 	}else{
 		++key_count;
 	}
+
+	int comp_count = 0;
+
+	for(int i = 0; i < lock_count; ++i){
+		for(int j = 0; j < key_count; ++j){
+			int is_comp = 1;
+
+			for(int k = 0; k < 5; ++k){
+				if(lock_arr[i][k] + key_arr[j][k] >= 8){
+					is_comp = 0;
+					break;
+				}
+			}
+
+			if(is_comp == 1){
+				++comp_count;
+			}
+		}
+	}
+
+	printf("%d\n", comp_count);
 
 	free(input_line);
 	return 0;
