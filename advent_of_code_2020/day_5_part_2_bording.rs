@@ -52,4 +52,24 @@ fn main() {
 
         seats_occupied[cur_id as usize] = true;
     }
+
+    let mut my_seat_id: usize = 0;
+
+    for (index, seat_triple) in seats_occupied.windows(3).enumerate() {
+        if seat_triple[0] == false {
+            continue;
+        }
+
+        if seat_triple[2] == false {
+            continue;
+        }
+
+        if seat_triple[1] == false {
+            my_seat_id = index + 1;
+
+            break;
+        }
+    }
+
+    println!("my seat id is {}", my_seat_id);
 }
