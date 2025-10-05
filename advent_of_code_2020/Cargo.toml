@@ -36,6 +36,10 @@ name = "day_4_part_2_passport"
 path = "day_4_part_2_passport.rs"
 
 [[bin]]
+name = "day_5_part_1_bording"
+path = "day_5_part_1_bording.rs"
+
+[[bin]]
 name = "day_13_part_1_bus"
 path = "day_13_part_1_bus.rs"
 
