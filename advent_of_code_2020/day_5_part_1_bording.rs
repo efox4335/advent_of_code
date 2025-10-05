@@ -1,3 +1,5 @@
+use std::io::stdin;
+
 const ROW_NUM: u32 = 128;
 const COL_NUM: u32 = 8;
 
@@ -31,4 +33,27 @@ fn get_seat(bording_pass: &str) -> Seat {
     };
 }
 
-fn main() {}
+fn get_seat_id(seat: &Seat) -> u32 {
+    return seat.row * 8 + seat.col;
+}
+
+fn main() {
+    let bording_passes: Vec<String> = stdin()
+        .lines()
+        .map(|line| -> String { line.unwrap().replace("\n", "") })
+        .collect();
+
+    let mut largest_id: u32 = 0;
+
+    for bording_pass in bording_passes {
+        let seat: Seat = get_seat(&bording_pass);
+
+        let cur_id: u32 = get_seat_id(&seat);
+
+        if cur_id > largest_id {
+            largest_id = cur_id
+        }
+    }
+
+    println!("largest seat id: {}", largest_id);
+}
