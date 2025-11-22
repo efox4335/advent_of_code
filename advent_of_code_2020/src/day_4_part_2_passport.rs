@@ -47,7 +47,7 @@ impl Fields {
     }
 }
 
-fn main() {
+pub fn solver() {
     let mut passports: Vec<String> = vec!["".to_string()];
 
     for line in stdin().lines().map(|s| s.unwrap().replace("\n", "")) {

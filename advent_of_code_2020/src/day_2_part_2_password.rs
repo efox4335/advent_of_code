@@ -1,6 +1,6 @@
 use std::io::stdin;
 
-fn main() {
+pub fn solver() {
     let mut valid_pass = 0;
 
     for line in stdin().lines() {

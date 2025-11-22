@@ -9,7 +9,7 @@ struct Pos {
     col: usize,
 }
 
-fn main() {
+pub fn solver() {
     let input: Vec<String> = stdin()
         .lines()
         .map(|s| s.unwrap().replace("\n", ""))

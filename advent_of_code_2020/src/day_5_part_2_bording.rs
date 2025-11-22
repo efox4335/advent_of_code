@@ -1,20 +1,20 @@
 use std::io::stdin;
 
-const ROW_NUM: u32 = 128;
-const COL_NUM: u32 = 8;
+const ROW_NUM: usize = 128;
+const COL_NUM: usize = 8;
 
 #[derive(Debug)]
 struct Seat {
-    row: u32,
-    col: u32,
+    row: usize,
+    col: usize,
 }
 
 fn get_seat(bording_pass: &str) -> Seat {
-    let mut upper_row: u32 = ROW_NUM - 1;
-    let mut lower_row: u32 = 0;
+    let mut upper_row = ROW_NUM - 1;
+    let mut lower_row = 0;
 
-    let mut right_col: u32 = COL_NUM - 1;
-    let mut left_col: u32 = 0;
+    let mut right_col = COL_NUM - 1;
+    let mut left_col = 0;
 
     for letter in bording_pass.chars() {
         match letter {
@@ -33,27 +33,43 @@ fn get_seat(bording_pass: &str) -> Seat {
     };
 }
 
-fn get_seat_id(seat: &Seat) -> u32 {
+fn get_seat_id(seat: &Seat) -> usize {
     return seat.row * 8 + seat.col;
 }
 
-fn main() {
+pub fn solver() {
     let bording_passes: Vec<String> = stdin()
         .lines()
         .map(|line| -> String { line.unwrap().replace("\n", "") })
         .collect();
 
-    let mut largest_id: u32 = 0;
+    let mut seats_occupied: [bool; ROW_NUM * COL_NUM] = [false; ROW_NUM * COL_NUM];
 
     for bording_pass in bording_passes {
         let seat: Seat = get_seat(&bording_pass);
 
-        let cur_id: u32 = get_seat_id(&seat);
+        let cur_id = get_seat_id(&seat);
 
-        if cur_id > largest_id {
-            largest_id = cur_id
+        seats_occupied[cur_id as usize] = true;
+    }
+
+    let mut my_seat_id: usize = 0;
+
+    for (index, seat_triple) in seats_occupied.windows(3).enumerate() {
+        if seat_triple[0] == false {
+            continue;
+        }
+
+        if seat_triple[2] == false {
+            continue;
+        }
+
+        if seat_triple[1] == false {
+            my_seat_id = index + 1;
+
+            break;
         }
     }
 
-    println!("largest seat id: {}", largest_id);
+    println!("my seat id is {}", my_seat_id);
 }

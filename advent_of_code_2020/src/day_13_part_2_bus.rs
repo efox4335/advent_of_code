@@ -8,7 +8,7 @@ struct BusTimes {
     arival_time: u64,
 }
 
-fn main() {
+pub fn solver() {
     let mut line = String::default();
     let _ = stdin().read_line(&mut line);
     line.clear();

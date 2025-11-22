@@ -1,6 +1,6 @@
 use std::io::stdin;
 
-fn main() {
+pub fn solver() {
     let mut line = String::default();
     let _ = stdin().read_line(&mut line);
     line.pop(); //strips newline
