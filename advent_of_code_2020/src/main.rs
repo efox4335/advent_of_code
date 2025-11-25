@@ -7,6 +7,7 @@ mod day_1_part_2_accounting;
 mod day_22_part_1;
 mod day_22_part_2;
 mod day_23_part_1;
+mod day_23_part_2;
 mod day_2_part_1_password;
 mod day_2_part_2_password;
 mod day_3_part_1_toboggan;
@@ -34,6 +35,7 @@ fn main() {
         s if s == "d22p1" => day_22_part_1::solver(),
         s if s == "d22p2" => day_22_part_2::solver(),
         s if s == "d23p1" => day_23_part_1::solver(),
+        s if s == "d23p2" => day_23_part_2::solver(),
         _ => panic!("unknown part"),
     }
 }
