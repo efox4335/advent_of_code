@@ -5,6 +5,7 @@ mod day_13_part_2_bus;
 mod day_1_part_1_accounting;
 mod day_1_part_2_accounting;
 mod day_21_part_1;
+mod day_21_part_2;
 mod day_22_part_1;
 mod day_22_part_2;
 mod day_23_part_1;
@@ -38,6 +39,7 @@ fn main() {
         s if s == "d23p1" => day_23_part_1::solver(),
         s if s == "d23p2" => day_23_part_2::solver(),
         s if s == "d21p1" => day_21_part_1::solver(),
+        s if s == "d21p2" => day_21_part_2::solver(),
         _ => panic!("unknown part"),
     }
 }
