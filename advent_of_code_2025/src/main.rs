@@ -1,6 +1,7 @@
 use std::env;
 
 mod day_1_part_1;
+mod day_1_part_2;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -10,6 +11,7 @@ fn main() {
 
     match args[1].as_str() {
         "d1p1" => day_1_part_1::solver(),
+        "d1p2" => day_1_part_2::solver(),
         _ => panic!("unknown day/part"),
     }
 }
