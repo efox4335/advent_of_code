@@ -3,6 +3,7 @@ use std::env;
 mod day_1_part_1;
 mod day_1_part_2;
 mod day_2_part_1;
+mod day_2_part_2;
 fn main() {
     let args: Vec<String> = env::args().collect();
 
@@ -14,6 +15,7 @@ fn main() {
         "d1p1" => day_1_part_1::solver(),
         "d1p2" => day_1_part_2::solver(),
         "d2p1" => day_2_part_1::solver(),
+        "d2p2" => day_2_part_2::solver(),
         _ => panic!("unknown day/part"),
     }
 }
