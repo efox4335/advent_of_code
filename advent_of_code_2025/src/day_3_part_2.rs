@@ -84,9 +84,5 @@ pub fn solver() {
         largest_jolts.push(on_batts.iter().fold(0, |acc, batt| acc * 10 + *batt as u64));
     }
 
-    for (ind, num) in largest_jolts.iter().enumerate() {
-        println!("{num} {}", ind + 1);
-    }
-
     println!("{}", largest_jolts.iter().sum::<u64>());
 }
