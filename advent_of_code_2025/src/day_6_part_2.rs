@@ -36,12 +36,12 @@ pub fn solver() {
     let mut problems: Vec<Problem> = Vec::new();
     let mut problems_index = 0;
 
-    for row_index in 0..input[0].len() {
-        if input[input.len() - 1][row_index] != b' ' {
+    for col_index in 0..input[0].len() {
+        if input[input.len() - 1][col_index] != b' ' {
             problems.push(Problem::new());
             problems_index = problems.len() - 1;
 
-            match input[input.len() - 1][row_index] {
+            match input[input.len() - 1][col_index] {
                 b'+' => problems[problems_index].add_op(Operation::Add),
                 b'*' => problems[problems_index].add_op(Operation::Mul),
                 c => panic!("char {c} should not be here"),
@@ -50,8 +50,8 @@ pub fn solver() {
 
         let mut new_num = 0;
 
-        for col_index in 0..input.len() - 1 {
-            let cur_char = input[col_index][row_index];
+        for row_index in 0..input.len() - 1 {
+            let cur_char = input[row_index][col_index];
 
             if new_num > 0 && cur_char == b' ' {
                 break;
