@@ -7,6 +7,7 @@ struct Range {
 }
 
 #[derive(Debug)]
+#[allow(dead_code)]
 enum RangeKey {
     Range(Range),
     Food(u64),
