@@ -35,12 +35,12 @@ struct Graph {
 
 impl Graph {
     fn kruskal_iter(&self, iter: usize) -> Graph {
-        let mut edge_heap = BinaryHeap::new();
+        let mut edge_vec = Vec::new();
 
         for (ver_1, ver_1_edges) in self.edges.iter().enumerate() {
             for (ver_2, edge_len) in ver_1_edges.iter().enumerate() {
                 if let Some(edge_len) = *edge_len {
-                    edge_heap.push(Reverse(Edge {
+                    edge_vec.push(Reverse(Edge {
                         len: edge_len,
                         ver_1,
                         ver_2,
@@ -48,6 +48,8 @@ impl Graph {
                 }
             }
         }
+
+        let mut edge_heap = BinaryHeap::from(edge_vec);
 
         let mut unions = UnionFind {
             members: Vec::new(),
