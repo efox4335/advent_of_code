@@ -1,5 +1,6 @@
 use std::env;
 
+mod day_10_part_1;
 mod day_1_part_1;
 mod day_1_part_2;
 mod day_2_part_1;
@@ -44,6 +45,7 @@ fn main() {
         "d8p2" => day_8_part_2::solver(),
         "d9p1" => day_9_part_1::solver(),
         "d9p2" => day_9_part_2::solver(),
+        "d10p1" => day_10_part_1::solver(),
         _ => panic!("unknown day/part"),
     }
 }
