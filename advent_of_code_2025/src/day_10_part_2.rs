@@ -427,7 +427,7 @@ pub fn solver() {
             }
         }
 
-        let check_output = og_mat.matrix_vec_mul(&sol_vec);
+        /*let check_output = og_mat.matrix_vec_mul(&sol_vec);
 
         if !check_output.are_equal(&system.end_state) {
             println!("{}", sys_num + 1);
@@ -444,7 +444,7 @@ pub fn solver() {
             panic!("this one here");
         }
 
-        println!("{:?}", sol_vec);
+        println!("{:?}", sol_vec);*/
 
         match smallest_solution {
             Some(val) => lowest_solutions.push(val),
