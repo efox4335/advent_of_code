@@ -4,6 +4,7 @@ mod day_10_part_1;
 mod day_10_part_2;
 mod day_11_part_1;
 mod day_11_part_2;
+mod day_12_part_1;
 mod day_1_part_1;
 mod day_1_part_2;
 mod day_2_part_1;
@@ -52,6 +53,7 @@ fn main() {
         "d10p2" => day_10_part_2::solver(),
         "d11p1" => day_11_part_1::solver(),
         "d11p2" => day_11_part_2::solver(),
+        "d12p1" => day_12_part_1::solver(),
         _ => panic!("unknown day/part"),
     }
 }
